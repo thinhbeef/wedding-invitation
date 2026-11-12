@@ -127,7 +127,7 @@ export const weddingInfo: WeddingInfo = {
 };
 
 /** Nhạc nền – chỉ dùng nhạc bạn có quyền sử dụng. */
-export const musicSrc = '/music/wedding-music.mp3';
+export const musicSrc = `${import.meta.env.BASE_URL}music/wedding-music.mp3`;
 
 /* ------------------------------------------------------------------ */
 /*  01 · ẢNH BÌA                                                       */

@@ -18,6 +18,10 @@ function hash(value: string): number {
   return h;
 }
 
+function withBase(path: string): string {
+  return path.startsWith('/') ? `${import.meta.env.BASE_URL}${path.slice(1)}` : path;
+}
+
 interface Props {
   src: string;
   alt: string;
@@ -51,15 +55,17 @@ export function ImageWithFallback({
   fit = 'cover',
   focus,
 }: Props) {
-  const sourceKey = `${src}|${thumbnail ?? ''}`;
+  const imageSrc = withBase(src);
+  const thumbnailSrc = thumbnail ? withBase(thumbnail) : undefined;
+  const sourceKey = `${imageSrc}|${thumbnailSrc ?? ''}`;
   const [prevKey, setPrevKey] = useState(sourceKey);
-  const [currentSrc, setCurrentSrc] = useState(thumbnail ?? src);
+  const [currentSrc, setCurrentSrc] = useState(thumbnailSrc ?? imageSrc);
   const [loaded, setLoaded] = useState(false);
   const [failed, setFailed] = useState(false);
 
   if (sourceKey !== prevKey) {
     setPrevKey(sourceKey);
-    setCurrentSrc(thumbnail ?? src);
+    setCurrentSrc(thumbnailSrc ?? imageSrc);
     setLoaded(false);
     setFailed(false);
   }
@@ -70,7 +76,7 @@ export function ImageWithFallback({
 
   const handleError = () => {
     // Thumbnail lỗi → thử ảnh gốc trước khi hiển thị ảnh giữ chỗ
-    if (currentSrc !== src) setCurrentSrc(src);
+    if (currentSrc !== imageSrc) setCurrentSrc(imageSrc);
     else setFailed(true);
   };
 

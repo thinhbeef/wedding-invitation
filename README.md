@@ -89,6 +89,17 @@ npm run preview    # xem thử bản build
 
 > Không chỉnh sửa hay chép ảnh vào `dist/` – thư mục này bị xoá và tạo lại mỗi lần build.
 
+### GitHub Pages
+
+Repository này đã có workflow tự build và deploy khi push lên nhánh `main`.
+
+1. Trên GitHub mở **Settings → Pages**.
+2. Trong **Build and deployment**, chọn **Source: GitHub Actions**.
+3. Push code lên `main`; theo dõi tiến trình tại tab **Actions**.
+4. Khi workflow thành công, trang sẽ ở: <https://thinhbeef.github.io/wedding-invitation/>.
+
+Workflow tự đặt base path `/wedding-invitation/`; ảnh, nhạc và favicon sẽ hoạt động dưới project URL này. Chạy `npm run dev` ở máy vẫn dùng đường dẫn local bình thường.
+
 **Vercel**: đẩy code lên GitHub → vercel.com → *Add New Project* → chọn repo → Framework *Vite* → *Deploy*.
 
 **Netlify**: app.netlify.com → *Import an existing project* → Build command `npm run build`, Publish directory `dist`. Hoặc kéo-thả thư mục `dist/` vào *Netlify Drop*.
