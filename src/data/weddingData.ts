@@ -155,11 +155,12 @@ export const invitation = {
 /* ------------------------------------------------------------------ */
 
 export const story: { intro: string; photos: Photo[] } = {
-  intro: '[Viết vài dòng ngắn về câu chuyện tình yêu của hai bạn.]',
+  intro:
+    'Giữa bao nhiêu người đi qua đời nhau, chúng mình đã tìm thấy nhau. Không ồn ào, chỉ là những ngày bình thường có nhau, rồi chính những ngày ấy hóa thành điều đặc biệt nhất. Ngày 06.12 này, chúng mình chính thức bước tiếp quãng đường còn lại bằng một cái nắm tay, và thật vui nếu có bạn ở đó.',
   photos: [
-    { src: '/images/couple-01.jpg', alt: 'Cô dâu chú rể', caption: '[Chú thích ảnh 1]' },
-    { src: '/images/couple-02.jpg', alt: 'Cô dâu chú rể', caption: '[Chú thích ảnh 2]' },
-    { src: '/images/couple-03.jpg', alt: 'Cô dâu chú rể', caption: '[Chú thích ảnh 3]' },
+    { src: '/images/couple-01-opt.jpg', alt: 'Cô dâu chú rể', caption: 'Bắt đầu từ đây' },
+    { src: '/images/couple-02-opt.jpg', alt: 'Cô dâu chú rể', caption: 'Những ngày có nhau' },
+    { src: '/images/couple-03-opt.jpg', alt: 'Cô dâu chú rể', caption: 'Một nhà, một đời' },
   ],
 };
 
@@ -193,12 +194,14 @@ export const dressCode: DressCode = {
 /* ------------------------------------------------------------------ */
 
 export const gallery: GalleryImage[] = [
-  { id: 'gallery-01', src: '/images/gallery-01.jpg', caption: '[Chú thích]', alt: 'Ảnh cưới', aspectRatio: 'landscape' },
-  { id: 'gallery-02', src: '/images/gallery-02.jpg', caption: '[Chú thích]', alt: 'Ảnh cưới', aspectRatio: 'portrait' },
-  { id: 'gallery-03', src: '/images/gallery-03.jpg', caption: '[Chú thích]', alt: 'Ảnh cưới', aspectRatio: 'square' },
-  { id: 'gallery-04', src: '/images/gallery-04.jpg', caption: '[Chú thích]', alt: 'Ảnh cưới', aspectRatio: 'tall' },
-  { id: 'gallery-05', src: '/images/gallery-05.jpg', caption: '[Chú thích]', alt: 'Ảnh cưới', aspectRatio: 'landscape' },
-  { id: 'gallery-06', src: '/images/gallery-06.jpg', caption: '[Chú thích]', alt: 'Ảnh cưới', aspectRatio: 'portrait' },
+  { id: 'gallery-01', src: '/images/couple-01-opt.jpg', caption: 'Chúng mình của hôm nay', alt: 'Cô dâu chú rể trong trang phục cưới', aspectRatio: 'tall' },
+  { id: 'gallery-02', src: '/images/couple-02-opt.jpg', caption: 'Nụ cười của em', alt: 'Cô dâu chú rể trong trang phục cưới', aspectRatio: 'tall' },
+  { id: 'gallery-03', src: '/images/couple-03-opt.jpg', caption: 'Bình yên bên anh', alt: 'Cô dâu chú rể trong trang phục cưới', aspectRatio: 'tall' },
+  { id: 'gallery-04', src: '/images/gallery-04-opt.jpg', caption: 'Chung một lối đi', alt: 'Khung ảnh cưới đang chờ ảnh', aspectRatio: 'portrait' },
+  { id: 'gallery-05', src: '/images/gallery-05-opt.jpg', caption: 'Nắm tay thật chặt', alt: 'Khung ảnh cưới đang chờ ảnh', aspectRatio: 'landscape' },
+  { id: 'gallery-06', src: '/images/gallery-06-opt.jpg', caption: 'Hẹn bạn ngày 06.12', alt: 'Khung ảnh cưới đang chờ ảnh', aspectRatio: 'square' },
+  { id: 'gallery-07', src: '/images/gallery-07-opt.jpg', caption: '', alt: 'Khung ảnh cưới đang chờ ảnh', aspectRatio: 'tall' },
+  { id: 'gallery-08', src: '/images/gallery-08-opt.jpg', caption: '', alt: 'Khung ảnh cưới đang chờ ảnh', aspectRatio: 'portrait' },
 ];
 
 /* ------------------------------------------------------------------ */

@@ -2,5 +2,10 @@ node_modules
 dist
 *.log
 .DS_Store
+/public/images/cover.jpg
+/public/images/couple-[0-9][0-9].jpg
+/public/images/couple-[0-9][0-9]-web.jpg
+/public/images/gallery-??-web.jpg
+/public/images/VIET*.jpg
 .vscode/*
 !.vscode/extensions.json

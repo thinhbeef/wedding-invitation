@@ -6,7 +6,6 @@ import {
   buildRsvpMessage,
   copyAndOpenZalo,
   getSmsUrl,
-  getZaloUrl,
   type Attendance,
   type RsvpPayload,
 } from '../../utils/messaging';
@@ -37,7 +36,6 @@ export function RSVPForm({ maxGuests }: { maxGuests: number }) {
   const [zaloNote, setZaloNote] = useState<string | null>(null);
   const { copied, copy, flash } = useClipboard();
 
-  const zaloUrl = getZaloUrl();
   const smsUrl = useMemo(() => (prepared ? getSmsUrl(prepared) : null), [prepared]);
 
   const handleSubmit = (e: FormEvent) => {
@@ -58,7 +56,7 @@ export function RSVPForm({ maxGuests }: { maxGuests: number }) {
         ? ok
           ? 'Tin nhắn đã được sao chép. Hãy dán (Paste) vào khung chat Zalo vừa mở và bấm Gửi.'
           : 'Đã mở Zalo. Trình duyệt không cho phép sao chép tự động – hãy dùng nút "Sao chép" bên dưới.'
-        : 'Chưa cấu hình liên hệ Zalo. Tin nhắn đã được sao chép để bạn gửi qua kênh khác.',
+        : 'Tin nhắn đã được sao chép. Bạn hãy dán và gửi cho cô dâu chú rể qua Zalo hoặc tin nhắn nhé.',
     );
   };
 
@@ -78,7 +76,7 @@ export function RSVPForm({ maxGuests }: { maxGuests: number }) {
           >
             <div className="grid gap-5 sm:grid-cols-2">
               <label className="block">
-                <span className="mb-2 block text-[0.68rem] font-medium tracking-[0.2em] text-olive uppercase">Họ và tên *</span>
+                <span className="mb-2 block text-xs font-medium tracking-[0.18em] text-olive-deep uppercase">Họ và tên *</span>
                 <input
                   className="field"
                   value={name}
@@ -91,7 +89,7 @@ export function RSVPForm({ maxGuests }: { maxGuests: number }) {
                 {errors.name && <span className="mt-1.5 block text-xs text-[#9b5b4b]">{errors.name}</span>}
               </label>
               <label className="block">
-                <span className="mb-2 block text-[0.68rem] font-medium tracking-[0.2em] text-olive uppercase">Số điện thoại</span>
+                <span className="mb-2 block text-xs font-medium tracking-[0.18em] text-olive-deep uppercase">Số điện thoại</span>
                 <input
                   className="field"
                   value={phone}
@@ -107,7 +105,7 @@ export function RSVPForm({ maxGuests }: { maxGuests: number }) {
             </div>
 
             <fieldset>
-              <legend className="mb-2 block text-[0.68rem] font-medium tracking-[0.2em] text-olive uppercase">Bạn sẽ đến chứ? *</legend>
+              <legend className="mb-2 block text-xs font-medium tracking-[0.18em] text-olive-deep uppercase">Bạn sẽ đến chứ? *</legend>
               <div className="grid grid-cols-2 gap-3">
                 {(
                   [
@@ -124,7 +122,7 @@ export function RSVPForm({ maxGuests }: { maxGuests: number }) {
                       aria-pressed={active}
                       className={`flex min-h-12 items-center justify-center gap-2 border px-3 py-2.5 text-sm transition-all duration-300 ${
                         active
-                          ? 'border-olive bg-olive text-warm'
+                          ? 'border-olive-deep bg-olive-deep text-warm'
                           : 'border-olive/25 bg-transparent text-forest/75 hover:border-olive/60'
                       }`}
                     >
@@ -145,7 +143,7 @@ export function RSVPForm({ maxGuests }: { maxGuests: number }) {
                   exit={{ height: 0, opacity: 0 }}
                   className="overflow-hidden"
                 >
-                  <span className="mb-2 block text-[0.68rem] font-medium tracking-[0.2em] text-olive uppercase">Số người tham dự</span>
+                  <span className="mb-2 block text-xs font-medium tracking-[0.18em] text-olive-deep uppercase">Số người tham dự</span>
                   <div className="flex items-center gap-4">
                     <button
                       type="button"
@@ -175,7 +173,7 @@ export function RSVPForm({ maxGuests }: { maxGuests: number }) {
             </AnimatePresence>
 
             <label className="block">
-              <span className="mb-2 block text-[0.68rem] font-medium tracking-[0.2em] text-olive uppercase">Lời chúc</span>
+              <span className="mb-2 block text-xs font-medium tracking-[0.18em] text-olive-deep uppercase">Lời chúc</span>
               <textarea
                 className="field min-h-24 resize-none"
                 value={message}
@@ -210,7 +208,7 @@ export function RSVPForm({ maxGuests }: { maxGuests: number }) {
               <Button
                 onClick={handleZalo}
                 icon={<MessageCircle className="h-4 w-4" strokeWidth={1.5} />}
-                title={zaloUrl ? 'Sao chép tin nhắn và mở Zalo' : 'Chưa cấu hình Zalo trong weddingData.ts'}
+                title="Sao chép tin nhắn và mở Zalo"
               >
                 Gửi qua Zalo
               </Button>

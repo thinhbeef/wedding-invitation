@@ -22,11 +22,11 @@ export function BottomNav({ active, onNavigate }: Props) {
                 onClick={() => onNavigate(id)}
                 aria-current={isActive ? 'true' : undefined}
                 className={`flex h-12 w-full flex-col items-center justify-center gap-0.5 transition-colors ${
-                  isActive ? 'text-olive' : 'text-forest/45 hover:text-forest/75'
+                  isActive ? 'text-olive-deep' : 'text-forest/60 hover:text-forest/80'
                 }`}
               >
                 <Icon className="h-[1.1rem] w-[1.1rem]" strokeWidth={isActive ? 1.8 : 1.4} />
-                <span className={`text-[0.58rem] tracking-[0.04em] uppercase ${isActive ? 'font-medium' : ''}`}>{label}</span>
+                <span className={`text-[0.66rem] tracking-[0.04em] uppercase ${isActive ? 'font-medium' : ''}`}>{label}</span>
               </button>
             </li>
           );

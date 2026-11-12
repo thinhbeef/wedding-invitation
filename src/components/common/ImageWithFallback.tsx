@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { ImageIcon } from 'lucide-react';
 import type { ImageAspect } from '../../data/weddingData';
 import { BotanicalBranch } from './Botanical';
@@ -51,15 +51,22 @@ export function ImageWithFallback({
   fit = 'cover',
   focus,
 }: Props) {
+  const sourceKey = `${src}|${thumbnail ?? ''}`;
+  const [prevKey, setPrevKey] = useState(sourceKey);
   const [currentSrc, setCurrentSrc] = useState(thumbnail ?? src);
   const [loaded, setLoaded] = useState(false);
   const [failed, setFailed] = useState(false);
 
-  useEffect(() => {
+  if (sourceKey !== prevKey) {
+    setPrevKey(sourceKey);
     setCurrentSrc(thumbnail ?? src);
     setLoaded(false);
     setFailed(false);
-  }, [src, thumbnail]);
+  }
+
+  const imgRef = useCallback((img: HTMLImageElement | null) => {
+    if (img?.complete && img.naturalWidth > 0) setLoaded(true);
+  }, []);
 
   const handleError = () => {
     // Thumbnail lỗi → thử ảnh gốc trước khi hiển thị ảnh giữ chỗ
@@ -82,12 +89,15 @@ export function ImageWithFallback({
           {!hideLabel && (
             <span className="px-4 text-center font-serif text-sm leading-tight italic opacity-80">
               Ảnh sẽ được cập nhật
-              <span className="mt-1 block font-sans text-[0.6rem] tracking-[0.2em] uppercase not-italic opacity-70">{fileName}</span>
+              {import.meta.env.DEV && (
+                <span className="mt-1 block font-sans text-[0.6rem] tracking-[0.2em] uppercase not-italic opacity-70">{fileName}</span>
+              )}
             </span>
           )}
         </div>
       ) : (
         <img
+          ref={imgRef}
           src={currentSrc}
           alt={alt}
           loading={priority ? 'eager' : 'lazy'}

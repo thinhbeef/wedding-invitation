@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 
 type Point = [number, number];
 
@@ -151,6 +151,9 @@ const FALLING = [
 
 /** Vài chiếc lá rơi rất chậm phía sau nội dung. */
 export function FallingLeaves({ className = '' }: { className?: string }) {
+  const reduce = useReducedMotion();
+  if (reduce) return null;
+
   return (
     <div className={`pointer-events-none absolute inset-0 overflow-hidden ${className}`} aria-hidden="true">
       {FALLING.map((leaf) => (
@@ -166,5 +169,76 @@ export function FallingLeaves({ className = '' }: { className?: string }) {
         </motion.svg>
       ))}
     </div>
+  );
+}
+
+/** Cành lá line-art ôm chân khung vòm: tự vẽ nét, lá hiện dần, rồi đung đưa nhẹ. `flip` để lật sang bên đối xứng. */
+export function ArchBranch({ className = '', flip = false, delay = 0 }: { className?: string; flip?: boolean; delay?: number }) {
+  const p0: Point = [16, 146];
+  const p1: Point = [2, 106];
+  const p2: Point = [22, 50];
+  const p3: Point = [46, 14];
+
+  const leaves = Array.from({ length: 7 }, (_, i) => {
+    const t = 0.14 + (i / 7) * 0.8;
+    const [x, y] = bezier(t, p0, p1, p2, p3);
+    const angle = tangentAngle(t, p0, p1, p2, p3);
+    return { x, y, rotate: angle + (i % 2 === 0 ? 52 : -52), scale: 0.85 - i * 0.06, key: i };
+  });
+
+  return (
+    <motion.svg
+      viewBox="0 0 100 150"
+      className={`pointer-events-none overflow-visible ${flip ? '-scale-x-100' : ''} ${className}`}
+      style={{ transformOrigin: '50% 100%' }}
+      fill="none"
+      aria-hidden="true"
+      animate={{ rotate: [0, 2.5] }}
+      transition={{ duration: 7, delay: delay + 3, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
+    >
+      <motion.path
+        d={`M${p0} C${p1} ${p2} ${p3}`}
+        stroke="var(--color-olive)"
+        strokeWidth={1}
+        strokeLinecap="round"
+        initial={{ pathLength: 0 }}
+        animate={{ pathLength: 1 }}
+        transition={{ duration: 2.8, delay, ease: 'easeInOut' }}
+      />
+      {leaves.map((leaf) => (
+        <g key={leaf.key} transform={`translate(${leaf.x} ${leaf.y}) rotate(${leaf.rotate}) scale(${leaf.scale})`}>
+          <motion.g
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: delay + 0.6 + leaf.key * 0.15 }}
+          >
+            <path d={LEAF} stroke="var(--color-olive)" strokeWidth={0.9} fill="var(--color-sage)" fillOpacity={0.25} />
+            <path d="M1 0 L20 0" stroke="var(--color-olive)" strokeWidth={0.5} opacity={0.4} />
+          </motion.g>
+        </g>
+      ))}
+      <motion.g
+        transform={`translate(${p3[0]} ${p3[1]})`}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8, delay: delay + 2.2 }}
+      >
+        {Array.from({ length: 5 }, (_, i) => (
+          <ellipse
+            key={i}
+            cx="0"
+            cy="-4.5"
+            rx="2.4"
+            ry="4.2"
+            stroke="var(--color-olive)"
+            strokeWidth={0.6}
+            fill="var(--color-blush)"
+            fillOpacity={0.7}
+            transform={`rotate(${i * 72})`}
+          />
+        ))}
+        <circle r="1.3" fill="var(--color-champagne)" />
+      </motion.g>
+    </motion.svg>
   );
 }

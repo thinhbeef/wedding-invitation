@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { MotionConfig } from 'framer-motion';
 import { musicSrc, type SectionId } from './data/weddingData';
 import { useBackgroundMusic } from './hooks/useBackgroundMusic';
 import { MusicPlayer } from './components/common/MusicPlayer';
@@ -40,7 +41,7 @@ export default function App() {
   };
 
   return (
-    <>
+    <MotionConfig reducedMotion="user">
       <main>
         <HeroSection onOpen={handleOpen} />
         <InvitationSection />
@@ -55,6 +56,6 @@ export default function App() {
       </main>
       <BottomNav active={active} onNavigate={scrollTo} />
       <MusicPlayer status={music.status} volume={music.volume} onToggle={music.toggle} onVolumeChange={music.setVolume} />
-    </>
+    </MotionConfig>
   );
 }

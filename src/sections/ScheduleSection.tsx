@@ -36,7 +36,7 @@ export function ScheduleSection() {
               <div className="pt-0.5">
                 <p className="font-serif text-2xl leading-none font-light text-olive tabular-nums">{item.time}</p>
                 <p className="mt-2 font-serif text-xl">{item.title}</p>
-                <p className="mt-1 text-sm text-forest/65">{item.description}</p>
+                <p className="mt-1 text-sm text-forest/75">{item.description}</p>
               </div>
             </Reveal>
           );
@@ -51,7 +51,7 @@ export function ScheduleSection() {
           href={getMapsUrl()}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-5 inline-block bg-olive px-7 py-3 text-[0.7rem] font-medium tracking-[0.25em] text-warm uppercase transition hover:bg-forest"
+          className="mt-5 inline-block bg-olive-deep px-7 py-3 text-xs font-medium tracking-[0.25em] text-warm uppercase transition hover:bg-forest"
         >
           Chỉ đường
         </a>

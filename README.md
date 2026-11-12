@@ -45,21 +45,24 @@ Chép ảnh vào `public/images/` (JPG, JPEG, PNG, WEBP):
 ```
 cover.jpg            ảnh bìa gốc
 cover-web.jpg        bản nén của ảnh bìa (website đang dùng file này)
-couple-01..03.jpg    3 ảnh polaroid ở mục câu chuyện
-gallery-01..06.jpg   album (gallery-01 là ảnh lớn)
+couple-01..03.jpg    3 ảnh cưới gốc
+couple-01..03-opt.jpg bản tối ưu đang dùng ở Chuyện tình và album
+gallery-04..08-opt.jpg 5 ảnh tối ưu của album
 thankyou.jpg         ảnh lời cảm ơn
 ```
 
-File chưa có sẽ hiện khung “Ảnh sẽ được cập nhật” kèm tên file.
+Các bản gốc được giữ nguyên trên máy; website và bản deploy dùng hậu tố `-opt` để tải ảnh nhẹ hơn. Ảnh studio gốc bị ignore để không đưa file nặng vào Git/Vercel. File chưa có sẽ hiện khung “Ảnh sẽ được cập nhật” kèm tên file khi chạy dev.
 
 **Nên nén ảnh trước khi đưa lên** (cạnh dài ~2000px, < 500KB) – ảnh gốc từ máy ảnh thường 10–25MB, khách mở bằng 4G sẽ rất chậm. Có thể dùng <https://squoosh.app>.
 
 ### Thêm ảnh vào album
 
-Chép file vào `public/images/` rồi thêm một dòng vào `gallery`:
+Album có sẵn năm khung trống. Chép ảnh gốc vào `public/images/`, tạo bản nén theo tên `gallery-04-opt.jpg` đến `gallery-08-opt.jpg`; mỗi khung sẽ tự hiện ảnh, không cần sửa code. Giữ ảnh gốc ở riêng tên file nếu muốn.
+
+Để thêm nhiều hơn tám ảnh, chép ảnh gốc vào `public/images/`, tạo bản nén `ten-anh-opt.jpg` (cạnh dài khoảng 2000px), rồi thêm một mục mới vào `gallery`:
 
 ```ts
-{ id: 'gallery-07', src: '/images/gallery-07.jpg', caption: 'Đà Lạt', alt: 'Ảnh cưới', aspectRatio: 'portrait' },
+{ id: 'gallery-09', src: '/images/gallery-09-opt.jpg', caption: 'Chú thích ảnh', alt: 'Cô dâu chú rể', aspectRatio: 'tall' },
 ```
 
 `aspectRatio`: `portrait` (4:5) · `landscape` (3:2) · `square` · `tall` (2:3) – nên khớp hướng ảnh thật.

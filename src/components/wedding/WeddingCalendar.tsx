@@ -35,7 +35,7 @@ export function WeddingCalendar() {
     <div className="relative mx-auto mt-10 max-w-sm overflow-hidden rounded-2xl border border-olive/20 bg-warm/95 p-6 text-center shadow-[0_12px_32px_-16px_rgb(52_59_48/0.25)] sm:p-7">
       {/* Tiêu đề lịch tháng */}
       <div className="flex items-center justify-between border-b border-olive/15 pb-4">
-        <span className="font-sans text-[0.7rem] font-medium tracking-[0.25em] text-olive uppercase">
+        <span className="font-sans text-xs font-medium tracking-[0.2em] text-olive-deep uppercase">
           {monthName} · {year}
         </span>
         <span className="inline-flex items-center gap-1 font-serif text-sm text-forest/70 italic">
@@ -44,9 +44,9 @@ export function WeddingCalendar() {
       </div>
 
       {/* Hàng thứ trong tuần */}
-      <div className="mt-4 grid grid-cols-7 text-center font-sans text-[0.65rem] font-semibold tracking-wider text-forest/50 uppercase">
+      <div className="mt-4 grid grid-cols-7 text-center font-sans text-xs font-semibold tracking-wider text-forest/65 uppercase">
         {WEEKDAYS.map((w) => (
-          <div key={w.label} className={w.isWeekend ? 'text-olive font-bold' : ''}>
+          <div key={w.label} className={w.isWeekend ? 'text-olive-deep font-bold' : ''}>
             {w.label}
           </div>
         ))}
@@ -100,10 +100,10 @@ export function WeddingCalendar() {
 
       {/* Chú thích ngày cưới */}
       <div className="mt-5 rounded-xl border border-dashed border-olive/30 bg-ivory/60 px-4 py-2.5 text-center">
-        <p className="font-sans text-[0.72rem] font-medium tracking-[0.15em] text-forest uppercase">
+        <p className="font-sans text-xs font-medium tracking-[0.12em] text-forest uppercase">
           {weekday}, ngày {String(targetDay).padStart(2, '0')} tháng {String(month).padStart(2, '0')} năm {year}
         </p>
-        <p className="mt-0.5 font-serif text-sm text-olive italic">
+        <p className="mt-0.5 font-serif text-base text-olive-deep italic">
           Ngày cưới chính thức của chúng mình
         </p>
       </div>

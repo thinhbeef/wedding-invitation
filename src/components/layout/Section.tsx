@@ -22,7 +22,7 @@ export function SectionTitle({ script, title, subtitle }: TitleProps) {
       <Sprig className="mx-auto mt-4 h-5 w-24" animated delay={0.5} />
       {subtitle && (
         <Reveal delay={0.6}>
-          <p className="mt-4 text-[0.95rem] text-forest/70">{subtitle}</p>
+          <p className="mt-4 text-base text-forest/80">{subtitle}</p>
         </Reveal>
       )}
     </div>

@@ -13,7 +13,7 @@ function Family({ label, person }: { label: string; person: Person }) {
       <p className="eyebrow">{label}</p>
       {person.father && <p className="mt-2 font-serif text-lg leading-snug">Ông {person.father}</p>}
       {person.mother && <p className="font-serif text-lg leading-snug">Bà {person.mother}</p>}
-      {person.home && <p className="mt-1 text-xs text-forest/55">{person.home}</p>}
+      {person.home && <p className="mt-1 text-xs text-forest/70">{person.home}</p>}
     </div>
   );
 }
@@ -54,7 +54,7 @@ export function InvitationSection() {
             {invitation.greeting}
           </WriteIn>
           <Reveal delay={0.5}>
-            <p className="mx-auto mt-3 whitespace-nowrap text-[0.58rem] text-forest/70 sm:text-sm">{invitation.lead}</p>
+            <p className="mx-auto mt-3 max-w-[20rem] text-sm leading-relaxed text-forest/80">{invitation.lead}</p>
           </Reveal>
 
           <Reveal effect="blur" delay={0.3} duration={1.4}>
@@ -66,15 +66,15 @@ export function InvitationSection() {
           </Reveal>
 
           <Reveal effect="scale" delay={0.2} className="mx-auto mt-10 grid max-w-sm grid-cols-[1fr_auto_1fr] items-center">
-            <p className="border-y border-olive/30 py-2 text-[0.62rem] font-medium tracking-[0.12em] whitespace-nowrap uppercase sm:text-[0.7rem] sm:tracking-[0.2em]">
+            <p className="border-y border-olive/30 py-2 text-center text-[0.7rem] leading-snug font-medium tracking-[0.1em] uppercase sm:text-xs sm:tracking-[0.2em]">
               {hour} giờ {minute}
             </p>
             <div className="px-3 sm:px-5">
-              <p className="text-[0.65rem] tracking-[0.25em] text-olive uppercase">Tháng {month}</p>
+              <p className="text-xs tracking-[0.2em] text-olive-deep uppercase">Tháng {month}</p>
               <p className="font-serif text-6xl sm:text-7xl leading-none font-bold text-olive">{day}</p>
-              <p className="text-[0.7rem] tracking-[0.25em] text-olive">{year}</p>
+              <p className="text-xs tracking-[0.2em] text-olive-deep">{year}</p>
             </div>
-            <p className="border-y border-olive/30 py-2 text-[0.62rem] font-medium tracking-[0.12em] whitespace-nowrap uppercase sm:text-[0.7rem] sm:tracking-[0.2em]">{weekday}</p>
+            <p className="border-y border-olive/30 py-2 text-center text-[0.7rem] leading-snug font-medium tracking-[0.1em] uppercase sm:text-xs sm:tracking-[0.2em]">{weekday}</p>
           </Reveal>
 
           <Reveal delay={0.2} className="mt-10">
@@ -87,7 +87,7 @@ export function InvitationSection() {
             <p className="mx-auto mt-8 max-w-sm font-serif text-lg leading-relaxed text-forest/80 italic">{invitation.message}</p>
           </Reveal>
 
-          <Reveal delay={0.4} className="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-3 text-[0.7rem] font-medium tracking-[0.2em] text-olive uppercase">
+          <Reveal delay={0.4} className="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-3 text-xs font-medium tracking-[0.18em] text-olive-deep uppercase">
             <a href={getMapsUrl()} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 border-b border-olive/40 pb-1 hover:text-forest">
               <MapPin className="h-3.5 w-3.5" strokeWidth={1.5} /> Xem bản đồ
             </a>
