@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    branches: [main, nha-gai]
   workflow_dispatch:
 
 permissions:
@@ -17,26 +17,30 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      VITE_BASE: /wedding-invitation/
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-      - name: Configure GitHub Pages
-        uses: actions/configure-pages@v5
-      - name: Install dependencies
-        run: npm ci
-      - name: Build site
-        run: npm run build
-      - name: Upload site artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist
+      - uses: actions/checkout@v4
+        with: { ref: main, path: main }
+      - uses: actions/checkout@v4
+        with: { ref: nha-gai, path: nha-gai }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - uses: actions/configure-pages@v5
+      - name: Build nhà trai
+        working-directory: main
+        env: { VITE_BASE: /wedding-invitation/ }
+        run: npm ci && npm run build
+      - name: Build nhà gái
+        working-directory: nha-gai
+        env: { VITE_BASE: /wedding-invitation/nha-gai/ }
+        run: npm ci && npm run build
+      - name: Gộp hai bản
+        run: |
+          mkdir site
+          cp -r main/dist/. site/
+          mkdir site/nha-gai
+          cp -r nha-gai/dist/. site/nha-gai/
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: site }
 
   deploy:
     environment:
@@ -45,6 +49,5 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
+      - id: deployment
         uses: actions/deploy-pages@v4
