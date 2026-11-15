@@ -131,7 +131,7 @@ export const weddingInfo: WeddingInfo = {
  * Không dùng link trang nghe nhạc (nhaccuatui, youtube...) vì đó không phải file âm thanh.
  * Nếu file chưa có, website tự dùng bản nhạc dự phòng bên dưới (xoá dòng đó nếu không muốn).
  */
-export const musicSrc = '/music/wedding-music.mp3';
+export const musicSrc = '/music/A%20Thousand%20Years.mp3';
 export const onlineMusicSrc = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3';
 export const musicSources = [musicSrc, onlineMusicSrc];
 

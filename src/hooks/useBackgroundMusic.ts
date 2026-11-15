@@ -38,6 +38,7 @@ export function useBackgroundMusic(src: string | string[]) {
     audio.addEventListener('play', onPlay);
     audio.addEventListener('pause', onPause);
     audio.addEventListener('error', onError);
+    audio.play().catch(() => setStatus('paused'));
 
     return () => {
       audio.pause();
