@@ -221,7 +221,7 @@ export const rsvp = {
    * Link Google Apps Script (kết thúc bằng /exec) để xác nhận được ghi thẳng vào Google Sheet của bạn.
    * Cách tạo: xem README mục 5 và file apps-script/rsvp.gs. Để trống = chỉ soạn tin nhắn Zalo/SMS.
    */
-  endpoint: '',
+  endpoint: 'https://script.google.com/macros/s/AKfycbxvl85GrBaU5X9w7OWKJ4dsDwLPRGGdBrYYXsBy1nKT2r6cGXyx7RbvWKYw31y1P_y6fA/exec',
 };
 
 /* ------------------------------------------------------------------ */
