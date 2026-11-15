@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { MotionConfig } from 'framer-motion';
-import { musicSrc, type SectionId } from './data/weddingData';
+import { musicSources, type SectionId } from './data/weddingData';
 import { useBackgroundMusic } from './hooks/useBackgroundMusic';
 import { MusicPlayer } from './components/common/MusicPlayer';
 import { BottomNav } from './components/navigation/BottomNav';
@@ -16,7 +16,7 @@ import { ThankYouSection } from './sections/ThankYouSection';
 
 export default function App() {
   const [active, setActive] = useState<SectionId>('home');
-  const music = useBackgroundMusic(musicSrc);
+  const music = useBackgroundMusic(musicSources);
 
   const scrollTo = useCallback((id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });

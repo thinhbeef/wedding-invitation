@@ -119,15 +119,17 @@ export const weddingInfo: WeddingInfo = {
   timezone: 'Asia/Ho_Chi_Minh',
   utcOffset: '+07:00',
   durationHours: 3,
-  venue: 'Nhà Hàng - Khách Sạn Diamond Bạc Liêu',
-  address: '36 Trần Huỳnh, Phường Bạc Liêu, Tỉnh Cà Mau',
-  mapsUrl: '[Link Google Maps]',
+  venue: 'Tư gia',
+  address: '08, Lê Quý Đôn, Xã Hòa Bình, Tỉnh Cà Mau',
+  mapsUrl: 'https://www.google.com/maps/search/?api=1&query=9.281496770535636,105.63045193963549',
   phone: '[Số điện thoại]',
   zalo: '[Link hoặc số Zalo]',
 };
 
-/** Nhạc nền – chỉ dùng nhạc bạn có quyền sử dụng. */
-export const musicSrc = `${import.meta.env.BASE_URL}music/wedding-music.mp3`;
+/** Nhạc nền – ưu tiên link bài hát mà khách mời gửi. */
+export const musicSrc = 'https://www.nhaccuatui.com/song/sGs5nzTHv6jP';
+export const onlineMusicSrc = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3';
+export const musicSources = [musicSrc, onlineMusicSrc];
 
 /* ------------------------------------------------------------------ */
 /*  01 · ẢNH BÌA                                                       */
@@ -156,7 +158,7 @@ export const invitation = {
 
 export const story: { intro: string; photos: Photo[] } = {
   intro:
-    'Giữa bao nhiêu người đi qua đời nhau, chúng mình đã tìm thấy nhau. Không ồn ào, chỉ là những ngày bình thường có nhau, rồi chính những ngày ấy hóa thành điều đặc biệt nhất. Ngày 06.12 này, chúng mình chính thức bước tiếp quãng đường còn lại bằng một cái nắm tay, và thật vui nếu có bạn ở đó.',
+    'Giữa rất nhiều người đi qua đời nhau, chúng mình lại tìm thấy nhau. Không ồn ào, không vội vã, chỉ là những ngày bình thường bên nhau, rồi từ từ, những ngày ấy đã trở thành những điều rất đặc biệt. Và vào ngày 06.12 này, chúng mình sẽ cùng bước tiếp quãng đường phía trước, tay trong tay, với niềm tin rằng tình yêu sẽ đi qua mọi mùa. Nếu có thể, chúng mình rất muốn bạn ở đó, cùng chia sẻ niềm hạnh phúc đầu tiên của cả hai.',
   photos: [
     { src: '/images/couple-01-opt.jpg', alt: 'Cô dâu chú rể', caption: 'Bắt đầu từ đây' },
     { src: '/images/couple-02-opt.jpg', alt: 'Cô dâu chú rể', caption: 'Những ngày có nhau' },
