@@ -70,15 +70,30 @@ Có thể thêm `focus: '50% 30%'` để chọn vùng giữ lại khi ảnh bị
 
 ## 4. Nhạc nền
 
-Chép file vào `public/music/wedding-music.mp3`. Nhạc phát khi khách bấm “Mở thiệp” hoặc nút nhạc góc phải. Thiếu file thì nút nhạc tự mờ đi, website vẫn chạy bình thường. Chỉ dùng nhạc bạn có quyền sử dụng.
+Chép file mp3 vào `public/music/wedding-music.mp3` (nên dưới 5MB, khoảng 128kbps) rồi commit cùng code. File nằm trong dự án nên phát được trên Vercel, GitHub Pages hay bất kỳ domain nào (đường dẫn tự thích ứng với `/wedding-invitation/` của GitHub Pages).
 
-## 5. Gửi lời chúc / xác nhận tham dự
+- Nhạc phát khi khách bấm “Mở thiệp” hoặc nút nhạc góc phải (trình duyệt chỉ cho phát sau khi khách chạm vào trang).
+- **Không dùng link trang nghe nhạc** (nhaccuatui, YouTube, Zing…) – đó là trang web, không phải file âm thanh nên không phát được.
+- Thiếu file thì website dùng bản nhạc dự phòng (`onlineMusicSrc` trong `weddingData.ts`); xoá nó khỏi `musicSources` nếu không muốn.
+- Chỉ dùng nhạc bạn có quyền sử dụng.
 
-Website **không lưu** dữ liệu. Khi khách bấm gửi, nội dung được soạn thành tin nhắn:
+## 5. Xác nhận tham dự / lời chúc
 
-- **Gửi qua Zalo**: sao chép tin nhắn rồi mở Zalo đã cấu hình để khách dán và gửi (Zalo không hỗ trợ điền sẵn nội dung qua link).
-- **Gửi SMS** (khi có số điện thoại): mở ứng dụng tin nhắn với nội dung điền sẵn.
-- **Sao chép**: gửi qua kênh bất kỳ.
+Có hai chế độ, tuỳ `rsvp.endpoint` trong `weddingData.ts`:
+
+**A. Ghi vào Google Sheet (khuyến nghị – không cần database)**
+Khách bấm gửi là thông tin vào thẳng một Google Sheet của bạn (họ tên, SĐT, có đến không, cữ nào, số người, lời chúc), có thể kèm email báo mỗi khi có người xác nhận.
+
+1. Vào <https://sheets.new>, tạo Sheet mới, đặt tên “Khách mời”.
+2. Menu **Tiện ích mở rộng → Apps Script**, xoá code mẫu, dán toàn bộ nội dung file `apps-script/rsvp.gs`. (Muốn nhận email thì điền `NOTIFY_EMAIL`.)
+3. Bấm **Triển khai → Tùy chọn triển khai mới → loại “Ứng dụng web”**: *Thực thi bằng: Tôi*, *Người có quyền truy cập: Bất kỳ ai* → **Triển khai** và cấp quyền khi Google hỏi.
+4. Sao chép **URL ứng dụng web** (kết thúc bằng `/exec`), dán vào `rsvp.endpoint` trong `src/data/weddingData.ts`, commit và push.
+5. Thử gửi một xác nhận trên thiệp: một dòng mới xuất hiện trong tab `RSVP` của Sheet.
+
+Sau này sửa code Apps Script thì phải **Triển khai → Quản lý triển khai → Chỉnh sửa → Phiên bản mới** thì mới có hiệu lực.
+
+**B. Chỉ soạn tin nhắn (để `endpoint: ''`)**
+Website không lưu gì; nội dung được soạn thành tin nhắn để khách tự gửi qua Zalo / SMS / sao chép. Cách này phụ thuộc khách nhớ bấm gửi.
 
 ## 6. Build & deploy
 

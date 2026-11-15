@@ -1,16 +1,19 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { withBase } from '../utils/assets';
 
 export type MusicStatus = 'idle' | 'playing' | 'paused' | 'unavailable';
 
 /** Quản lý nhạc nền: một thẻ <audio> duy nhất tồn tại suốt vòng đời ứng dụng. */
 export function useBackgroundMusic(src: string | string[]) {
-  const sources = Array.isArray(src) ? src.filter(Boolean) : [src].filter(Boolean);
+  // useMemo: giữ nguyên mảng giữa các lần render, nếu không <audio> bị tạo lại và nhạc dừng mỗi khi giao diện cập nhật
+  const sources = useMemo(() => (Array.isArray(src) ? src : [src]).filter(Boolean).map(withBase), [src]);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const sourceIndexRef = useRef(0);
   const [status, setStatus] = useState<MusicStatus>('idle');
   const [volume, setVolumeState] = useState(0.6);
 
   useEffect(() => {
+    sourceIndexRef.current = 0;
     const audio = new Audio();
     audio.loop = true;
     audio.preload = 'none';

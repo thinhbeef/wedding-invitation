@@ -125,8 +125,13 @@ export const weddingInfo: WeddingInfo = {
   zalo: '[Link hoặc số Zalo]',
 };
 
-/** Nhạc nền – ưu tiên link bài hát mà khách mời gửi. */
-export const musicSrc = 'https://www.nhaccuatui.com/song/sGs5nzTHv6jP';
+/**
+ * Nhạc nền: chép file mp3 vào `public/music/wedding-music.mp3` (nên < 5MB).
+ * File nằm trong dự án nên chạy được trên Vercel, GitHub Pages hay bất kỳ domain nào.
+ * Không dùng link trang nghe nhạc (nhaccuatui, youtube...) vì đó không phải file âm thanh.
+ * Nếu file chưa có, website tự dùng bản nhạc dự phòng bên dưới (xoá dòng đó nếu không muốn).
+ */
+export const musicSrc = '/music/wedding-music.mp3';
 export const onlineMusicSrc = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3';
 export const musicSources = [musicSrc, onlineMusicSrc];
 
@@ -210,8 +215,13 @@ export const gallery: GalleryImage[] = [
 
 export const rsvp = {
   title: 'Gửi lời chúc đến cô dâu chú rể',
-  note: 'Website không lưu thông tin. Lời chúc sẽ được soạn thành tin nhắn để bạn gửi qua Zalo.',
+  note: 'Bạn xác nhận tham dự và gửi lời chúc tại đây để gia đình tiện chuẩn bị.',
   maxGuests: 10,
+  /**
+   * Link Google Apps Script (kết thúc bằng /exec) để xác nhận được ghi thẳng vào Google Sheet của bạn.
+   * Cách tạo: xem README mục 5 và file apps-script/rsvp.gs. Để trống = chỉ soạn tin nhắn Zalo/SMS.
+   */
+  endpoint: '',
 };
 
 /* ------------------------------------------------------------------ */

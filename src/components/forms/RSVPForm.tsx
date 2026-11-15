@@ -10,6 +10,7 @@ import {
   type Attendance,
   type RsvpPayload,
 } from '../../utils/messaging';
+import { submitRsvp, hasRsvpEndpoint } from '../../utils/rsvpApi';
 import { Button, LinkButton } from '../common/Button';
 
 type Errors = Partial<Record<'name' | 'phone' | 'attendance' | 'session', string>>;
@@ -37,6 +38,8 @@ export function RSVPForm({ maxGuests }: { maxGuests: number }) {
   const [errors, setErrors] = useState<Errors>({});
   const [prepared, setPrepared] = useState<string | null>(null);
   const [zaloNote, setZaloNote] = useState<string | null>(null);
+  const [sendState, setSendState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle');
+  const [lastPayload, setLastPayload] = useState<RsvpPayload | null>(null);
   const { copied, copy, flash } = useClipboard();
 
   const smsUrl = useMemo(() => (prepared ? getSmsUrl(prepared) : null), [prepared]);
@@ -47,7 +50,29 @@ export function RSVPForm({ maxGuests }: { maxGuests: number }) {
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0 || !attendance) return;
     setZaloNote(null);
-    setPrepared(buildRsvpMessage({ name, phone, attendance, guests, session, message }));
+    const payload: RsvpPayload = { name, phone, attendance, guests, session, message };
+    setLastPayload(payload);
+    setPrepared(buildRsvpMessage(payload));
+    if (hasRsvpEndpoint) void send(payload);
+  };
+
+  const send = async (payload: RsvpPayload) => {
+    setSendState('sending');
+    setSendState((await submitRsvp(payload)) ? 'sent' : 'error');
+  };
+
+  const resetAll = () => {
+    setName('');
+    setPhone('');
+    setAttendance(null);
+    setGuests(1);
+    setSession('');
+    setMessage('');
+    setErrors({});
+    setZaloNote(null);
+    setSendState('idle');
+    setLastPayload(null);
+    setPrepared(null);
   };
 
   const handleZalo = async () => {
@@ -220,10 +245,34 @@ export function RSVPForm({ maxGuests }: { maxGuests: number }) {
             exit={{ opacity: 0, y: -12 }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           >
-            <p className="eyebrow">Bước cuối · Gửi tin nhắn</p>
-            <p className="mt-2 text-sm leading-relaxed text-forest/70">
-              Tin nhắn xác nhận đã được soạn sẵn. Website không lưu thông tin của bạn – hãy gửi tin nhắn này cho cô dâu chú rể để hoàn tất.
-            </p>
+            {hasRsvpEndpoint ? (
+              <div role="status" className="rounded-xl bg-sage/15 px-4 py-3 text-sm leading-relaxed text-forest/85">
+                {sendState === 'sending' && 'Đang gửi xác nhận…'}
+                {sendState === 'sent' && 'Cảm ơn bạn! Xác nhận đã được gửi tới cô dâu chú rể. Hẹn gặp bạn nhé 💐'}
+                {sendState === 'error' && (
+                  <>
+                    Chưa gửi được xác nhận (có thể do mạng). Bạn bấm “Gửi lại” hoặc gửi tin nhắn bên dưới qua Zalo nhé.
+                    <button
+                      type="button"
+                      onClick={() => lastPayload && void send(lastPayload)}
+                      className="ml-2 font-medium text-olive-deep underline underline-offset-2"
+                    >
+                      Gửi lại
+                    </button>
+                  </>
+                )}
+              </div>
+            ) : (
+              <>
+                <p className="eyebrow">Bước cuối · Gửi tin nhắn</p>
+                <p className="mt-2 text-sm leading-relaxed text-forest/70">
+                  Tin nhắn xác nhận đã được soạn sẵn – hãy gửi tin nhắn này cho cô dâu chú rể để hoàn tất.
+                </p>
+              </>
+            )}
+            {hasRsvpEndpoint && sendState !== 'error' && (
+              <p className="mt-4 text-xs tracking-[0.12em] text-forest/55 uppercase">Bạn cũng có thể gửi thêm qua Zalo (không bắt buộc)</p>
+            )}
             <pre className="mt-4 max-h-56 overflow-auto border border-olive/20 bg-ivory p-4 font-sans text-[0.85rem] leading-relaxed whitespace-pre-wrap text-forest/85">
               {prepared}
             </pre>
@@ -248,9 +297,15 @@ export function RSVPForm({ maxGuests }: { maxGuests: number }) {
               >
                 {copied === null ? 'Sao chép' : copied ? 'Đã sao chép' : 'Không sao chép được'}
               </Button>
-              <Button variant="ghost" onClick={() => setPrepared(null)}>
-                Chỉnh sửa
-              </Button>
+              {hasRsvpEndpoint ? (
+                <Button variant="ghost" onClick={resetAll} disabled={sendState === 'sending'}>
+                  {sendState === 'sent' ? 'Gửi xác nhận khác' : 'Quay lại'}
+                </Button>
+              ) : (
+                <Button variant="ghost" onClick={() => setPrepared(null)}>
+                  Chỉnh sửa
+                </Button>
+              )}
             </div>
 
             <AnimatePresence>
