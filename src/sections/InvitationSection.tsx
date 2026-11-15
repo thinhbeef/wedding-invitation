@@ -44,8 +44,9 @@ export function InvitationSection() {
             <BotanicalBranch className="h-full w-full" outline />
           </motion.div>
 
-          <Reveal delay={0.3} className="text-center">
+          <Reveal delay={0.3} className="grid grid-cols-2 gap-4 text-center">
             <Family label="Nhà gái" person={weddingInfo.bride} />
+            <Family label="Nhà trai" person={weddingInfo.groom} />
           </Reveal>
 
           <WriteIn delay={0.4} className="mt-10 font-script text-[1.8rem] leading-tight text-olive sm:text-3xl">
