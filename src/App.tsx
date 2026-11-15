@@ -8,7 +8,6 @@ import { HeroSection } from './sections/HeroSection';
 import { InvitationSection } from './sections/InvitationSection';
 import { StorySection } from './sections/StorySection';
 import { CountdownSection } from './sections/CountdownSection';
-import { ScheduleSection } from './sections/ScheduleSection';
 import { DressCodeSection } from './sections/DressCodeSection';
 import { GallerySection } from './sections/GallerySection';
 import { RSVPSection } from './sections/RSVPSection';
@@ -47,7 +46,6 @@ export default function App() {
         <InvitationSection />
         <StorySection />
         <CountdownSection />
-        <ScheduleSection />
         <DressCodeSection />
         <GallerySection />
         <RSVPSection />

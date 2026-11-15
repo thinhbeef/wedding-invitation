@@ -29,7 +29,7 @@ Mọi nội dung nằm trong **`src/data/weddingData.ts`**:
 | Ảnh bìa, dòng chữ trên ảnh bìa | `hero` |
 | Lời mời | `invitation` |
 | Câu chuyện + 3 ảnh polaroid | `story` |
-| Lịch trình | `schedule` |
+| Hai cữ tiệc (giờ, tiêu đề) | `sessions` |
 | Dress code (đặt `enabled: true` để hiện) | `dressCode` |
 | Album ảnh | `gallery` |
 | Tiêu đề / số khách tối đa của form | `rsvp` |

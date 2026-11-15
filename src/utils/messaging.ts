@@ -1,4 +1,4 @@
-import { weddingInfo } from '../data/weddingData';
+import { sessions, weddingInfo } from '../data/weddingData';
 
 const isHttpUrl = (value: string) => /^https?:\/\//i.test(value.trim());
 const digitsOf = (value: string) => value.replace(/[^\d+]/g, '');
@@ -74,17 +74,20 @@ export interface RsvpPayload {
   phone: string;
   attendance: Attendance;
   guests: number;
+  session: string;
   message: string;
 }
 
 export function buildRsvpMessage(data: RsvpPayload): string {
-  const couple = `${weddingInfo.groom.name} & ${weddingInfo.bride.name}`;
+  const couple = `${weddingInfo.bride.name} & ${weddingInfo.groom.name}`;
+  const picked = sessions.find((s) => s.id === data.session);
   const lines = [
     `XÁC NHẬN THAM DỰ – Đám cưới ${couple}`,
     '',
     `Họ tên: ${data.name.trim()}`,
     data.phone.trim() ? `Số điện thoại: ${data.phone.trim()}` : null,
     `Tham dự: ${data.attendance === 'yes' ? 'Có, mình sẽ đến' : 'Rất tiếc, mình không thể đến'}`,
+    data.attendance === 'yes' && picked ? `Cữ tham dự: ${picked.title} (${picked.time})` : null,
     data.attendance === 'yes' ? `Số người: ${data.guests}` : null,
     data.message.trim() ? `\nLời chúc: ${data.message.trim()}` : null,
   ];
@@ -92,6 +95,6 @@ export function buildRsvpMessage(data: RsvpPayload): string {
 }
 
 export function buildWishMessage(name: string, wish: string): string {
-  const couple = `${weddingInfo.groom.name} & ${weddingInfo.bride.name}`;
+  const couple = `${weddingInfo.bride.name} & ${weddingInfo.groom.name}`;
   return `Gửi ${couple} 💐\n\n${wish.trim()}\n\n— ${name.trim()}`;
 }

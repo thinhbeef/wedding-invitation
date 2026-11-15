@@ -66,12 +66,11 @@ export interface GalleryImage extends Photo {
   aspectRatio: ImageAspect;
 }
 
-export interface ScheduleItem {
+export interface Session {
   id: string;
   time: string;
   title: string;
   description: string;
-  icon: 'arrival' | 'ceremony' | 'reception' | 'other';
 }
 
 export interface ColorSwatch {
@@ -113,13 +112,13 @@ export const weddingInfo: WeddingInfo = {
     mother: 'La Bích Thủy',
     home: 'Xã Hòa Bình, Tỉnh Cà Mau',
   },
-  date: '2026-12-06',
+  date: '2026-12-05',
   // [Giờ tổ chức] – 11:00 là GIỜ MẪU, hãy thay bằng giờ thật
   time: '11:00',
   timezone: 'Asia/Ho_Chi_Minh',
   utcOffset: '+07:00',
   durationHours: 3,
-  venue: 'Tư gia',
+  venue: 'Tư gia nhà gái',
   address: '08, Lê Quý Đôn, Xã Hòa Bình, Tỉnh Cà Mau',
   mapsUrl: 'https://www.google.com/maps/search/?api=1&query=9.281496770535636,105.63045193963549',
   phone: '[Số điện thoại]',
@@ -148,8 +147,8 @@ export const hero = {
 
 export const invitation = {
   greeting: 'Trân trọng kính mời',
-  lead: 'Tới dự buổi tiệc chung vui cùng gia đình chúng tôi',
-  message: 'Sự hiện diện của quý khách là niềm vinh hạnh cho gia đình chúng tôi.',
+  lead: 'Tới dự bữa tiệc thân mật tại tư gia cùng gia đình chúng tôi',
+  message: 'Gia đình xin đón tiếp quý khách vào một trong hai cữ tiệc. Sự hiện diện của quý khách là niềm vinh hạnh cho gia đình chúng tôi.',
 };
 
 /* ------------------------------------------------------------------ */
@@ -158,7 +157,7 @@ export const invitation = {
 
 export const story: { intro: string; photos: Photo[] } = {
   intro:
-    'Giữa rất nhiều người đi qua đời nhau, chúng mình lại tìm thấy nhau. Không ồn ào, không vội vã, chỉ là những ngày bình thường bên nhau, rồi từ từ, những ngày ấy đã trở thành những điều rất đặc biệt. Và vào ngày 06.12 này, chúng mình sẽ cùng bước tiếp quãng đường phía trước, tay trong tay, với niềm tin rằng tình yêu sẽ đi qua mọi mùa. Nếu có thể, chúng mình rất muốn bạn ở đó, cùng chia sẻ niềm hạnh phúc đầu tiên của cả hai.',
+    'Giữa rất nhiều người đi qua đời nhau, chúng mình lại tìm thấy nhau. Không ồn ào, không vội vã, chỉ là những ngày bình thường bên nhau, rồi từ từ, những ngày ấy đã trở thành những điều rất đặc biệt. Và vào ngày 05.12 này, chúng mình sẽ cùng bước tiếp quãng đường phía trước, tay trong tay, với niềm tin rằng tình yêu sẽ đi qua mọi mùa. Nếu có thể, chúng mình rất muốn bạn ở đó, cùng chia sẻ niềm hạnh phúc đầu tiên của cả hai.',
   photos: [
     { src: '/images/couple-01-opt.jpg', alt: 'Cô dâu chú rể', caption: 'Bắt đầu từ đây' },
     { src: '/images/couple-02-opt.jpg', alt: 'Cô dâu chú rể', caption: 'Những ngày có nhau' },
@@ -167,13 +166,12 @@ export const story: { intro: string; photos: Photo[] } = {
 };
 
 /* ------------------------------------------------------------------ */
-/*  05 · LỊCH TRÌNH (giờ là GIỜ MẪU)                                   */
+/*  05 · HAI CỮ TIỆC TẠI TƯ GIA                                        */
 /* ------------------------------------------------------------------ */
 
-export const schedule: ScheduleItem[] = [
-  { id: 'arrival', time: '10:30', title: 'Đón khách', description: 'Chào đón quý khách và chụp ảnh lưu niệm.', icon: 'arrival' },
-  { id: 'ceremony', time: '11:00', title: 'Lễ cưới', description: 'Nghi lễ thành hôn của cô dâu và chú rể.', icon: 'ceremony' },
-  { id: 'reception', time: '11:30', title: 'Khai tiệc', description: 'Cùng nâng ly và chung vui bữa tiệc.', icon: 'reception' },
+export const sessions: Session[] = [
+  { id: 'lunch', time: '11:00', title: 'Cữ trưa', description: 'Đón khách và dùng bữa trưa thân mật cùng gia đình.' },
+  { id: 'dinner', time: '16:00', title: 'Cữ chiều', description: 'Đón khách và dùng bữa chiều thân mật cùng gia đình.' },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -201,7 +199,7 @@ export const gallery: GalleryImage[] = [
   { id: 'gallery-03', src: '/images/couple-03-opt.jpg', caption: 'Bình yên bên anh', alt: 'Cô dâu chú rể trong trang phục cưới', aspectRatio: 'tall' },
   { id: 'gallery-04', src: '/images/gallery-04-opt.jpg', caption: 'Chung một lối đi', alt: 'Khung ảnh cưới đang chờ ảnh', aspectRatio: 'portrait' },
   { id: 'gallery-05', src: '/images/gallery-05-opt.jpg', caption: 'Nắm tay thật chặt', alt: 'Khung ảnh cưới đang chờ ảnh', aspectRatio: 'landscape' },
-  { id: 'gallery-06', src: '/images/gallery-06-opt.jpg', caption: 'Hẹn bạn ngày 06.12', alt: 'Khung ảnh cưới đang chờ ảnh', aspectRatio: 'square' },
+  { id: 'gallery-06', src: '/images/gallery-06-opt.jpg', caption: 'Hẹn bạn ngày 05.12', alt: 'Khung ảnh cưới đang chờ ảnh', aspectRatio: 'square' },
   { id: 'gallery-07', src: '/images/gallery-07-opt.jpg', caption: '', alt: 'Khung ảnh cưới đang chờ ảnh', aspectRatio: 'tall' },
   { id: 'gallery-08', src: '/images/gallery-08-opt.jpg', caption: '', alt: 'Khung ảnh cưới đang chờ ảnh', aspectRatio: 'portrait' },
 ];

@@ -17,7 +17,7 @@ export function CountdownSection() {
 
   return (
     <section id="wedding" data-nav="wedding" className="bg-mist px-5 py-20 sm:py-24">
-      <SectionTitle script="Save the date" title="Đếm ngược ngày chung đôi" />
+      <SectionTitle script="Save the date" title="Đếm ngược đến ngày tiệc" />
       <Reveal className="mx-auto mt-12 max-w-2xl">
         {isPast ? (
           <p className="text-center font-serif text-2xl text-forest/80 italic">Cảm ơn bạn đã cùng chúng mình đi qua ngày hạnh phúc nhất.</p>

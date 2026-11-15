@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { CalendarPlus, MapPin } from 'lucide-react';
-import { invitation, weddingInfo, type Person } from '../data/weddingData';
+import { invitation, sessions, weddingInfo, type Person } from '../data/weddingData';
 import { downloadIcs } from '../utils/calendar';
 import { getWeddingDateParts } from '../utils/date';
 import { getMapsUrl } from '../utils/messaging';
@@ -20,7 +20,6 @@ function Family({ label, person }: { label: string; person: Person }) {
 
 export function InvitationSection() {
   const { day, month, year, weekday } = getWeddingDateParts();
-  const [hour, minute] = weddingInfo.time.split(':');
 
   return (
     <section id="invitation" data-nav="home" className="bg-ivory px-5 py-20 sm:py-28">
@@ -45,8 +44,7 @@ export function InvitationSection() {
             <BotanicalBranch className="h-full w-full" outline />
           </motion.div>
 
-          <Reveal delay={0.3} className="grid grid-cols-2 gap-4 text-center">
-            <Family label="Nhà trai" person={weddingInfo.groom} />
+          <Reveal delay={0.3} className="text-center">
             <Family label="Nhà gái" person={weddingInfo.bride} />
           </Reveal>
 
@@ -66,15 +64,22 @@ export function InvitationSection() {
           </Reveal>
 
           <Reveal effect="scale" delay={0.2} className="mx-auto mt-10 grid max-w-sm grid-cols-[1fr_auto_1fr] items-center">
-            <p className="border-y border-olive/30 py-2 text-center text-[0.7rem] leading-snug font-medium tracking-[0.1em] uppercase sm:text-xs sm:tracking-[0.2em]">
-              {hour} giờ {minute}
-            </p>
+            <p className="border-y border-olive/30 py-2 text-center text-[0.7rem] leading-snug font-medium tracking-[0.1em] uppercase sm:text-xs sm:tracking-[0.2em]">{weekday}</p>
             <div className="px-3 sm:px-5">
               <p className="text-xs tracking-[0.2em] text-olive-deep uppercase">Tháng {month}</p>
               <p className="font-serif text-6xl sm:text-7xl leading-none font-bold text-olive">{day}</p>
               <p className="text-xs tracking-[0.2em] text-olive-deep">{year}</p>
             </div>
-            <p className="border-y border-olive/30 py-2 text-center text-[0.7rem] leading-snug font-medium tracking-[0.1em] uppercase sm:text-xs sm:tracking-[0.2em]">{weekday}</p>
+            <p className="border-y border-olive/30 py-2 text-center text-[0.7rem] leading-snug font-medium tracking-[0.1em] uppercase sm:text-xs sm:tracking-[0.2em]">Tại tư gia</p>
+          </Reveal>
+
+          <Reveal delay={0.3} className="mx-auto mt-6 grid max-w-sm grid-cols-2 gap-3">
+            {sessions.map((s) => (
+              <div key={s.id} className="border border-olive/30 px-3 py-4">
+                <p className="eyebrow">{s.title}</p>
+                <p className="mt-1 font-serif text-4xl leading-none font-light text-olive tabular-nums">{s.time}</p>
+              </div>
+            ))}
           </Reveal>
 
           <Reveal delay={0.2} className="mt-10">
