@@ -104,7 +104,7 @@ export function WeddingCalendar() {
           {weekday}, ngày {String(targetDay).padStart(2, '0')} tháng {String(month).padStart(2, '0')} năm {year}
         </p>
         <p className="mt-0.5 font-serif text-base text-olive-deep italic">
-          Hai cữ tiệc tại tư gia · 11:00 và 16:00
+          Hai cữ tiệc tại tư gia · 10:30 và 16:00
         </p>
       </div>
     </div>

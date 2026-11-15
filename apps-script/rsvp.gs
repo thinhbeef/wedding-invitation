@@ -5,7 +5,7 @@
 const SHEET_NAME = 'RSVP';
 const NOTIFY_EMAIL = ''; // điền email để nhận thông báo mỗi khi có người xác nhận (để trống = không gửi)
 
-const SESSIONS = { lunch: 'Cữ trưa 11:00', dinner: 'Cữ chiều 16:00' };
+const SESSIONS = { lunch: 'Cữ trưa 10:30', dinner: 'Cữ chiều 16:00' };
 
 function clean(value, max) {
   return String(value == null ? '' : value).slice(0, max || 500);

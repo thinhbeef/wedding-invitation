@@ -22,7 +22,7 @@ export function ThankYouSection() {
         <Sprig className="mx-auto mt-8 h-5 w-24" animated delay={0.3} />
         <Reveal effect="blur" delay={0.5}>
           <p className="mt-6 font-serif text-2xl">
-            {weddingInfo.groom.name} <span className="text-champagne italic">&amp;</span> {weddingInfo.bride.name}
+            {weddingInfo.bride.name} <span className="text-champagne italic">&amp;</span> {weddingInfo.groom.name}
           </p>
           <p className="mt-2 text-sm tracking-[0.3em] text-olive">{formatDotDate().replace(/ · /g, '.')}</p>
         </Reveal>

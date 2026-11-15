@@ -113,8 +113,8 @@ export const weddingInfo: WeddingInfo = {
     home: 'Xã Hòa Bình, Tỉnh Cà Mau',
   },
   date: '2026-12-05',
-  // [Giờ tổ chức] – 11:00 là GIỜ MẪU, hãy thay bằng giờ thật
-  time: '11:00',
+  // Giờ bắt đầu của cữ trưa; dùng cho đếm ngược.
+  time: '10:30',
   timezone: 'Asia/Ho_Chi_Minh',
   utcOffset: '+07:00',
   durationHours: 3,
@@ -175,7 +175,7 @@ export const story: { intro: string; photos: Photo[] } = {
 /* ------------------------------------------------------------------ */
 
 export const sessions: Session[] = [
-  { id: 'lunch', time: '11:00', title: 'Cữ trưa', description: 'Đón khách và dùng bữa trưa thân mật cùng gia đình.' },
+  { id: 'lunch', time: '10:30', title: 'Cữ trưa', description: 'Đón khách và dùng bữa trưa thân mật cùng gia đình.' },
   { id: 'dinner', time: '16:00', title: 'Cữ chiều', description: 'Đón khách và dùng bữa chiều thân mật cùng gia đình.' },
 ];
 

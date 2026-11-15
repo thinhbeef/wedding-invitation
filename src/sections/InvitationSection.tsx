@@ -58,9 +58,9 @@ export function InvitationSection() {
 
           <Reveal effect="blur" delay={0.3} duration={1.4}>
             <h2 className="mt-7 font-serif text-[2.4rem] leading-tight font-normal sm:text-5xl">
-              {weddingInfo.groom.name}
-              <span className="block py-1 font-serif text-2xl text-champagne italic">&amp;</span>
               {weddingInfo.bride.name}
+              <span className="block py-1 font-serif text-2xl text-champagne italic">&amp;</span>
+              {weddingInfo.groom.name}
             </h2>
           </Reveal>
 

@@ -56,7 +56,7 @@ export function HeroSection({ onOpen }: Props) {
           >
             <ImageWithFallback
               src={hero.image}
-              alt={`${weddingInfo.groom.name} và ${weddingInfo.bride.name}`}
+              alt={`${weddingInfo.bride.name} và ${weddingInfo.groom.name}`}
               aspect="tall"
               focus={hero.focus}
               priority
@@ -74,13 +74,13 @@ export function HeroSection({ onOpen }: Props) {
         </motion.p>
         <h1 className="mt-2 font-serif text-[3.2rem] leading-[1.05] font-light text-forest sm:text-6xl xl:text-7xl">
           <motion.span {...fade(1.1, { x: -30 })} className="block">
-            {weddingInfo.groom.name}
+            {weddingInfo.bride.name}
           </motion.span>
           <motion.span {...fade(1.3, { scale: 0.6 })} className="block font-serif text-[0.8em] font-light text-olive italic">
             &amp;
           </motion.span>
           <motion.span {...fade(1.5, { x: 30 })} className="block">
-            {weddingInfo.bride.name}
+            {weddingInfo.groom.name}
           </motion.span>
         </h1>
         <Sprig className="mx-auto mt-3 h-5 w-24" animated delay={2.1} />
