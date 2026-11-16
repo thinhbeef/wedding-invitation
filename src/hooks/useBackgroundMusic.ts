@@ -13,8 +13,9 @@ const GESTURES = ['pointerup', 'touchend', 'click', 'keydown'] as const;
  *  1) thử phát ngay khi mở trang (thành công nếu trình duyệt cho phép);
  *  2) nếu bị chặn, phát ở lần chạm / bấm phím đầu tiên của khách (kể cả nút "Mở thiệp").
  * Khách đã chủ động tạm dừng thì không tự phát lại.
+ * autoStart = false: chờ thao tác mở phong bì gọi play() trước khi phát nhạc.
  */
-export function useBackgroundMusic(src: string) {
+export function useBackgroundMusic(src: string, autoStart = true) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const userPausedRef = useRef(false);
   const [status, setStatus] = useState<MusicStatus>('idle');
@@ -49,20 +50,24 @@ export function useBackgroundMusic(src: string) {
     audio.addEventListener('pause', onPause);
     audio.addEventListener('error', onError);
 
-    GESTURES.forEach((name) => window.addEventListener(name, onGesture, true));
-    audio.play().then(stopWaiting).catch(() => {
-      // Bị chặn tự phát: đã đăng ký sẵn lắng nghe lần tương tác đầu tiên ở trên
-    });
+    if (autoStart) {
+      GESTURES.forEach((name) => window.addEventListener(name, onGesture, true));
+      audio.play().then(stopWaiting).catch(() => {
+        // Bị chặn tự phát: đã đăng ký sẵn lắng nghe lần tương tác đầu tiên ở trên
+      });
+    }
 
     return () => {
       stopWaiting();
-      audio.pause();
       audio.removeEventListener('play', onPlay);
       audio.removeEventListener('pause', onPause);
       audio.removeEventListener('error', onError);
+      audio.pause();
+      audio.removeAttribute('src');
+      audio.load();
       audioRef.current = null;
     };
-  }, [src]);
+  }, [src, autoStart]);
 
   /** Gọi trong một thao tác của người dùng (click/tap). */
   const play = useCallback(() => {

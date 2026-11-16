@@ -1,0 +1,268 @@
+.invitation-opening {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: max(24px, env(safe-area-inset-top)) 24px max(24px, env(safe-area-inset-bottom));
+  background: radial-gradient(ellipse at 50% 38%, #fffdf8 0%, #efebe1 70%, #e7e3d8);
+  color: #5c624f;
+  will-change: opacity;
+}
+
+.opening-content {
+  position: relative;
+  margin: auto;
+  text-align: center;
+}
+
+.opening-eyebrow {
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: #77785d;
+}
+
+.opening-dedication {
+  margin-top: 9px;
+  font-family: var(--font-serif);
+  font-size: clamp(24px, 5vw, 30px);
+  font-style: italic;
+  font-weight: 400;
+  color: #797c65;
+}
+
+.opening-trigger {
+  display: block;
+  margin: 28px auto 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.opening-trigger:focus-visible {
+  outline: 1px solid #8e987b;
+  outline-offset: 12px;
+  border-radius: 3px;
+}
+
+.opening-trigger[aria-disabled='true'] { cursor: default; }
+
+.gatefold-card {
+  display: block;
+  position: relative;
+  width: min(354px, calc(100vw - 76px), calc((100svh - 220px) * 0.75));
+  aspect-ratio: 3 / 4;
+  perspective: 1600px;
+  isolation: isolate;
+  text-align: center;
+  /* Only moving paper surfaces get layers; the page is not blurred or scaled. */
+}
+
+.gatefold-card::before {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border-radius: 3px;
+  box-shadow: 0 24px 50px -20px #59513c55, 0 4px 10px #60583d18;
+}
+
+.gatefold-inside {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  border: 9px solid #eef0e5;
+  outline: 1px solid #8a987b3d;
+  outline-offset: -17px;
+  background: #e2e7d8;
+  color: #58664b;
+}
+
+.inside-eyebrow {
+  margin-top: 3%;
+  font-size: 8px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+
+.inside-monogram { width: 34%; margin: 5% 0 3%; }
+
+.inside-names {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-serif);
+  font-size: clamp(24px, 6vw, 37px);
+  line-height: 1.05;
+}
+
+.inside-names i { margin: 4px 0; font-size: 0.65em; color: #899272; }
+.inside-divider { width: 28px; height: 1px; margin: 7% 0 5%; background: #a6aa8b; }
+.inside-date { font-size: 9px; letter-spacing: 0.22em; }
+.inside-message { margin-top: 5%; font-family: var(--font-serif); font-size: 13px; font-style: italic; }
+
+.gatefold-door {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  overflow: hidden;
+  background: #faf7ef;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  will-change: transform;
+}
+
+.gatefold-door--left {
+  left: 0;
+  transform-origin: 0 50%;
+  border-radius: 3px 0 0 3px;
+  box-shadow: 1px 0 1px #c5b99d55;
+}
+
+.gatefold-door--right {
+  right: 0;
+  transform-origin: 100% 50%;
+  border-radius: 0 3px 3px 0;
+  box-shadow: -1px 0 1px #c5b99d44;
+}
+
+.gatefold-print {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 200%;
+  background:
+    radial-gradient(ellipse at 25% 20%, #ffffffa6, transparent 55%),
+    repeating-linear-gradient(0deg, #9f8e6505 0 1px, transparent 1px 3px),
+    #faf7ef;
+}
+
+.gatefold-door--left .gatefold-print { left: 0; }
+.gatefold-door--right .gatefold-print { right: 0; }
+
+.gatefold-frame {
+  position: absolute;
+  inset: 5.5%;
+  border: 1px solid #b4a07080;
+  border-radius: 46% 46% 2px 2px / 34% 34% 2px 2px;
+}
+
+.gatefold-frame::before {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border: 1px solid #b4a07030;
+  border-radius: inherit;
+}
+
+.gatefold-heading {
+  position: absolute;
+  top: 18%;
+  right: 0;
+  left: 0;
+  font-size: 7px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #948465;
+}
+
+.gatefold-botanical {
+  position: absolute;
+  bottom: 7%;
+  width: 31%;
+  opacity: 0.43;
+}
+
+.gatefold-botanical--left { left: -2%; transform: rotate(-30deg); }
+.gatefold-botanical--right { right: -2%; transform: scaleX(-1) rotate(-30deg); }
+
+.gatefold-monogram {
+  position: absolute;
+  z-index: 3;
+  top: 24%;
+  left: 26%;
+  width: 48%;
+  color: #a18a55;
+  pointer-events: none;
+}
+
+.gatefold-monogram svg { width: 100%; filter: drop-shadow(0 1px 0 #fff); }
+
+.gatefold-names {
+  position: absolute;
+  top: 57%;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-serif);
+  font-size: clamp(26px, 6vw, 36px);
+  line-height: 1.05;
+  color: #61694f;
+}
+
+.gatefold-names i { font-size: 0.62em; margin: 4px 0; font-weight: 300; color: #a18a55; }
+.gatefold-date { position: absolute; bottom: 12%; right: 0; left: 0; font-size: 8px; letter-spacing: 0.25em; color: #82775b; }
+
+.opening-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  min-height: 44px;
+  margin-top: 25px;
+  padding: 0 25px;
+  border: 1px solid #9a9c7e60;
+  border-radius: 30px;
+  background: #fffdf750;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  transition: background-color 250ms, border-color 250ms;
+}
+
+.opening-action svg { transition: transform 250ms; }
+.opening-instruction { margin-top: 12px; font-size: 9px; font-weight: 300; color: #797b68; }
+.is-opening { pointer-events: none; }
+
+@media (hover: hover) {
+  .opening-trigger:not([aria-disabled='true']):hover .opening-action { background: #fffdf7; border-color: #8b9172; }
+  .opening-trigger:not([aria-disabled='true']):hover .opening-action svg { transform: translateX(4px); }
+}
+
+@media (max-height: 640px) and (max-width: 599px) {
+  .opening-trigger { margin-top: 20px; }
+  .opening-action { margin-top: 18px; }
+  .gatefold-names { font-size: 26px; }
+  .inside-names { font-size: 25px; }
+  .inside-message { font-size: 11px; }
+}
+
+@media (max-height: 500px) and (min-width: 600px) {
+  .opening-content { display: grid; grid-template-columns: auto 1fr; align-items: center; column-gap: 45px; }
+  .opening-intro { grid-column: 2; align-self: end; }
+  .opening-trigger { grid-column: 1; grid-row: 1 / 3; margin: 0; }
+  .gatefold-card { width: calc((100svh - 120px) * 0.75); }
+  .gatefold-names { font-size: 22px; }
+  .gatefold-date { font-size: 6px; }
+  .inside-names { font-size: 21px; }
+  .inside-message { font-size: 9px; }
+  .inside-monogram { margin: 2% 0; }
+  .opening-action { margin-top: 12px; }
+  .opening-instruction { grid-column: 2; align-self: start; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gatefold-door { will-change: auto; }
+}

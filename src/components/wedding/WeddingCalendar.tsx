@@ -38,9 +38,7 @@ export function WeddingCalendar() {
         <span className="font-sans text-xs font-medium tracking-[0.2em] text-olive-deep uppercase">
           {monthName} · {year}
         </span>
-        <span className="inline-flex items-center gap-1 font-serif text-sm text-forest/70 italic">
-          <Heart className="h-3.5 w-3.5 fill-olive text-olive" /> Save our Date
-        </span>
+        <Heart className="h-3.5 w-3.5 shrink-0 fill-olive text-olive" aria-hidden="true" />
       </div>
 
       {/* Hàng thứ trong tuần */}
@@ -61,20 +59,18 @@ export function WeddingCalendar() {
           const isSunday = index % 7 === 6;
 
           if (!isValidDay) {
-            return <div key={`empty-${index}`} className="h-9 w-9" />;
+            return <div key={`empty-${index}`} className="h-9" />;
           }
 
           if (isTarget) {
             return (
               <div key={dayNumber} className="relative flex items-center justify-center">
-                {/* Vòng sáng nhẹ quanh ngày cưới */}
-                <span className="absolute -inset-1 animate-ping rounded-full bg-olive/20 opacity-75" />
                 <motion.div
                   initial={{ scale: 0.8 }}
                   whileInView={{ scale: 1 }}
                   viewport={{ once: true }}
                   transition={{ type: 'spring', stiffness: 300, damping: 15 }}
-                  className="relative flex h-9 w-9 flex-col items-center justify-center rounded-full bg-olive text-warm shadow-md ring-2 ring-champagne"
+                  className="relative flex h-9 w-full max-w-9 flex-col items-center justify-center rounded-full bg-olive text-warm shadow-md ring-2 ring-champagne"
                 >
                   <span className="font-serif text-base font-bold leading-none sm:text-lg">
                     {String(dayNumber).padStart(2, '0')}
@@ -88,7 +84,7 @@ export function WeddingCalendar() {
           return (
             <div
               key={dayNumber}
-              className={`flex h-9 w-9 items-center justify-center mx-auto font-serif text-base sm:text-lg transition-colors ${
+              className={`flex h-9 w-full max-w-9 items-center justify-center mx-auto font-serif text-base sm:text-lg transition-colors ${
                 isSunday ? 'text-olive/80 font-medium' : 'text-forest/75'
               }`}
             >
@@ -99,12 +95,9 @@ export function WeddingCalendar() {
       </div>
 
       {/* Chú thích ngày cưới */}
-      <div className="mt-5 rounded-xl border border-dashed border-olive/30 bg-ivory/60 px-4 py-2.5 text-center">
-        <p className="font-sans text-xs font-medium tracking-[0.12em] text-forest uppercase">
+      <div className="mt-4 border-t border-olive/15 pt-3 text-center">
+        <p className="font-sans text-xs leading-relaxed text-olive-deep">
           {weekday}, ngày {String(targetDay).padStart(2, '0')} tháng {String(month).padStart(2, '0')} năm {year}
-        </p>
-        <p className="mt-0.5 font-serif text-base text-olive-deep italic">
-          Ngày cưới chính thức của chúng mình
         </p>
       </div>
     </div>

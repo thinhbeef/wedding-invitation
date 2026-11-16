@@ -1,4 +1,6 @@
 @import 'tailwindcss';
+@import './fonts.css';
+@import './wedding-layout.css';
 
 @theme {
   --color-ivory: #f5f2e9;
@@ -13,7 +15,7 @@
 
   --font-serif: 'Cormorant Garamond', 'Times New Roman', serif;
   --font-sans: 'Be Vietnam Pro', system-ui, sans-serif;
-  --font-script: 'Great Vibes', cursive;
+  --font-script: 'Great Vibes', 'Cormorant Garamond', 'Times New Roman', serif;
 
   --ease-silk: cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -25,6 +27,7 @@
 
 html {
   scroll-behavior: smooth;
+  scrollbar-gutter: stable;
   -webkit-text-size-adjust: 100%;
 }
 
@@ -45,7 +48,7 @@ body {
 }
 
 section[id] {
-  scroll-margin-top: 0;
+  scroll-margin-top: 24px;
 }
 
 .eyebrow {

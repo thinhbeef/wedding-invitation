@@ -2,7 +2,12 @@ import { rsvp } from '../data/weddingData';
 import type { RsvpPayload } from './messaging';
 
 const SHEET_URL_PATTERN = /^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/;
-const TIMEOUT_MS = 15000;
+const TIMEOUT_MS = 25000;
+
+export type RsvpSubmissionResult =
+  | { status: 'saved' }
+  | { status: 'rejected' }
+  | { status: 'unconfirmed' };
 
 /** Đã dán link Apps Script hợp lệ vào `rsvp.sheetUrl` chưa. */
 export function isSheetConfigured(): boolean {
@@ -26,15 +31,15 @@ async function withTimeout<T>(run: (signal: AbortSignal) => Promise<T>): Promise
 }
 
 /**
- * Gửi xác nhận tham dự vào Google Sheet qua Apps Script Web App. Trả về true nếu đã gửi được.
+ * Gửi xác nhận tham dự vào Google Sheet qua Apps Script Web App.
  *
  * - Dùng Content-Type text/plain để là "simple request" (Apps Script không xử lý preflight).
- * - Ưu tiên đọc phản hồi để biết chắc Sheet đã ghi. Nếu trình duyệt không cho đọc (CORS / trình duyệt
- *   trong ứng dụng), gửi lại ở chế độ no-cors; mã gửi giúp Sheet bỏ qua nếu dòng đã được ghi.
+ * - Chỉ báo đã lưu khi đọc được phản hồi ok: true. Phản hồi không đọc được hoặc hết thời gian chờ
+ *   là chưa xác nhận, vì máy chủ có thể đã ghi. Khách thử lại với cùng mã để không ghi trùng.
  */
-export async function submitRsvpToSheet(data: RsvpPayload, submissionId: string, honeypot = ''): Promise<boolean> {
+export async function submitRsvpToSheet(data: RsvpPayload, submissionId: string, honeypot = ''): Promise<RsvpSubmissionResult> {
   const url = rsvp.sheetUrl.trim();
-  if (!isSheetConfigured()) return false;
+  if (!isSheetConfigured() || honeypot) return { status: 'rejected' };
 
   const init = {
     method: 'POST',
@@ -51,22 +56,18 @@ export async function submitRsvpToSheet(data: RsvpPayload, submissionId: string,
     }),
   } satisfies RequestInit;
 
-  let response: Response;
   try {
-    response = await withTimeout((signal) => fetch(url, { ...init, signal }));
+    return await withTimeout(async (signal) => {
+      const response = await fetch(url, { ...init, mode: 'cors', credentials: 'omit', redirect: 'follow', signal });
+      // Keep the timeout active while reading the response body, too.
+      const result: unknown = await response.json();
+      if (!response.ok || !result || typeof result !== 'object' || !('ok' in result)) {
+        return { status: 'unconfirmed' };
+      }
+      if (result.ok === true) return { status: 'saved' };
+      return { status: result.ok === false ? 'rejected' : 'unconfirmed' };
+    });
   } catch {
-    try {
-      await withTimeout((signal) => fetch(url, { ...init, mode: 'no-cors', signal }));
-      return true;
-    } catch {
-      return false;
-    }
-  }
-
-  try {
-    const result = (await response.json()) as { ok?: boolean };
-    return result.ok === true;
-  } catch {
-    return false;
+    return { status: 'unconfirmed' };
   }
 }

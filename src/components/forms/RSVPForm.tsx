@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState, type FormEvent } from 'react';
+import { useCallback, useMemo, useRef, useState, type FormEvent } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Check, Copy, Heart, MessageCircle, Minus, Plus, Send, X } from 'lucide-react';
 import { useClipboard } from '../../hooks/useClipboard';
@@ -45,15 +45,24 @@ export function RSVPForm({ maxGuests }: { maxGuests: number }) {
   const [honeypot, setHoneypot] = useState('');
   const [errors, setErrors] = useState<Errors>({});
   const [sending, setSending] = useState(false);
-  const [sendError, setSendError] = useState(false);
+  const [sendError, setSendError] = useState<'rejected' | 'unconfirmed' | null>(null);
   const [sent, setSent] = useState<{ name: string; attendance: Attendance } | null>(null);
   const [prepared, setPrepared] = useState<string | null>(null);
   const [zaloNote, setZaloNote] = useState<string | null>(null);
   const { copied, copy, flash } = useClipboard();
-  const submissionId = useRef(createSubmissionId());
+  const submitting = useRef(false);
+  const lastAttempt = useRef<{ payload: string; id: string } | null>(null);
 
   const sheetReady = isSheetConfigured();
   const smsUrl = useMemo(() => (prepared ? getSmsUrl(prepared) : null), [prepared]);
+  const focusConfirmation = useCallback((node: HTMLDivElement | null) => {
+    if (!node) return;
+    node.focus({ preventScroll: true });
+    node.scrollIntoView({
+      block: 'center',
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
+    });
+  }, []);
 
   const openFallback = () => {
     if (!attendance) return;
@@ -63,7 +72,7 @@ export function RSVPForm({ maxGuests }: { maxGuests: number }) {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (sending) return;
+    if (submitting.current) return;
     const nextErrors = validate({ name, phone, attendance, guests, message });
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0 || !attendance) return;
@@ -74,12 +83,32 @@ export function RSVPForm({ maxGuests }: { maxGuests: number }) {
       return;
     }
 
+    const data: RsvpPayload = {
+      name: name.trim(),
+      phone: phone.trim(),
+      attendance,
+      guests: attendance === 'yes' ? guests : 0,
+      message: message.trim(),
+    };
+    const payload = JSON.stringify(data);
+    // Retry identical data with the same ID. Edited data must not be mistaken for an old submission.
+    if (lastAttempt.current?.payload !== payload) {
+      lastAttempt.current = { payload, id: createSubmissionId() };
+    }
+
+    submitting.current = true;
     setSending(true);
-    setSendError(false);
-    const ok = await submitRsvpToSheet({ name, phone, attendance, guests, message }, submissionId.current, honeypot);
-    setSending(false);
-    if (ok) setSent({ name: name.trim(), attendance });
-    else setSendError(true);
+    setSendError(null);
+    try {
+      const result = await submitRsvpToSheet(data, lastAttempt.current.id, honeypot);
+      if (result.status === 'saved') setSent({ name: data.name, attendance: data.attendance });
+      else setSendError(result.status);
+    } catch {
+      setSendError('unconfirmed');
+    } finally {
+      submitting.current = false;
+      setSending(false);
+    }
   };
 
   const resetForm = () => {
@@ -89,10 +118,12 @@ export function RSVPForm({ maxGuests }: { maxGuests: number }) {
     setGuests(1);
     setMessage('');
     setErrors({});
-    setSendError(false);
+    setSendError(null);
     setSent(null);
     setPrepared(null);
-    submissionId.current = createSubmissionId();
+    setHoneypot('');
+    setZaloNote(null);
+    lastAttempt.current = null;
   };
 
   const handleZalo = async () => {
@@ -112,163 +143,168 @@ export function RSVPForm({ maxGuests }: { maxGuests: number }) {
     <div className="relative">
       <AnimatePresence mode="wait">
         {sent ? (
-          <motion.div key="sent" {...PANEL_MOTION} className="py-4 text-center" role="status">
+          <motion.div key="sent" ref={focusConfirmation} tabIndex={-1} {...PANEL_MOTION} className="py-4 text-center outline-none" role="status">
             <Heart className="mx-auto h-8 w-8 text-olive" strokeWidth={1.2} fill={sent.attendance === 'yes' ? 'currentColor' : 'none'} />
             <p className="mt-4 font-serif text-2xl">
               {sent.attendance === 'yes' ? 'Cảm ơn bạn đã xác nhận!' : 'Cảm ơn bạn đã báo cho chúng mình'}
             </p>
             <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-forest/75">
               {sent.attendance === 'yes'
-                ? `Cô dâu chú rể đã nhận được thông tin của ${sent.name}. Hẹn gặp bạn tại buổi tiệc nhé.`
-                : 'Rất tiếc không được đón bạn. Chúc bạn thật nhiều niềm vui và sức khỏe.'}
+                ? `Xác nhận của ${sent.name} đã được lưu. Hẹn gặp bạn tại buổi tiệc nhé.`
+                : `Phản hồi của ${sent.name} đã được lưu. Rất tiếc không được đón bạn, cảm ơn bạn đã báo cho chúng mình.`}
             </p>
             <Button variant="ghost" className="mt-6" onClick={resetForm}>
               Gửi xác nhận khác
             </Button>
           </motion.div>
         ) : !prepared ? (
-          <motion.form key="form" onSubmit={handleSubmit} noValidate {...PANEL_MOTION} className="space-y-5">
-            <div className="grid gap-5 sm:grid-cols-2">
-              <label className="block">
-                <span className={LABEL}>Họ và tên *</span>
-                <input
-                  className="field"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Nguyễn Văn A"
-                  autoComplete="name"
-                  maxLength={60}
-                  aria-invalid={Boolean(errors.name)}
-                />
-                {errors.name && <span className={ERROR_TEXT}>{errors.name}</span>}
-              </label>
-              <label className="block">
-                <span className={LABEL}>Số điện thoại</span>
-                <input
-                  className="field"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="09xx xxx xxx"
-                  inputMode="tel"
-                  autoComplete="tel"
-                  maxLength={18}
-                  aria-invalid={Boolean(errors.phone)}
-                />
-                {errors.phone && <span className={ERROR_TEXT}>{errors.phone}</span>}
-              </label>
-            </div>
-
-            <fieldset>
-              <legend className={LABEL}>Bạn sẽ đến chứ? *</legend>
-              <div className="grid grid-cols-2 gap-3">
-                {(
-                  [
-                    { value: 'yes', label: 'Sẽ tham dự', icon: Heart },
-                    { value: 'no', label: 'Không thể đến', icon: X },
-                  ] as const
-                ).map(({ value, label, icon: Icon }) => {
-                  const active = attendance === value;
-                  return (
-                    <button
-                      key={value}
-                      type="button"
-                      onClick={() => setAttendance(value)}
-                      aria-pressed={active}
-                      className={`flex min-h-12 items-center justify-center gap-2 border px-3 py-2.5 text-sm transition-all duration-300 ${
-                        active
-                          ? 'border-olive-deep bg-olive-deep text-warm'
-                          : 'border-olive/25 bg-transparent text-forest/75 hover:border-olive/60'
-                      }`}
-                    >
-                      <Icon className="h-4 w-4" strokeWidth={1.5} fill={active && value === 'yes' ? 'currentColor' : 'none'} />
-                      {label}
-                    </button>
-                  );
-                })}
+          <motion.form key="form" onSubmit={handleSubmit} noValidate {...PANEL_MOTION} aria-busy={sending}>
+            <fieldset disabled={sending} className="min-w-0 space-y-5">
+              <div className="grid gap-5 sm:grid-cols-2">
+                <label className="block">
+                  <span className={LABEL}>Họ và tên *</span>
+                  <input
+                    className="field"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Nguyễn Văn A"
+                    autoComplete="name"
+                    maxLength={60}
+                    aria-invalid={Boolean(errors.name)}
+                  />
+                  {errors.name && <span className={ERROR_TEXT}>{errors.name}</span>}
+                </label>
+                <label className="block">
+                  <span className={LABEL}>Số điện thoại</span>
+                  <input
+                    className="field"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder="09xx xxx xxx"
+                    inputMode="tel"
+                    autoComplete="tel"
+                    maxLength={18}
+                    aria-invalid={Boolean(errors.phone)}
+                  />
+                  {errors.phone && <span className={ERROR_TEXT}>{errors.phone}</span>}
+                </label>
               </div>
-              {errors.attendance && <span className={ERROR_TEXT}>{errors.attendance}</span>}
-            </fieldset>
 
-            <AnimatePresence initial={false}>
-              {attendance === 'yes' && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  className="overflow-hidden"
-                >
-                  <span className={LABEL}>Số người tham dự</span>
-                  <div className="flex items-center gap-4">
-                    <button
-                      type="button"
-                      onClick={() => setGuests((g) => Math.max(1, g - 1))}
-                      disabled={guests <= 1}
-                      aria-label="Giảm số người"
-                      className="flex h-11 w-11 items-center justify-center rounded-full border border-olive/25 text-olive transition hover:bg-olive hover:text-warm disabled:opacity-30"
-                    >
-                      <Minus className="h-4 w-4" />
-                    </button>
-                    <output className="w-10 text-center font-serif text-3xl tabular-nums" aria-live="polite">
-                      {guests}
-                    </output>
-                    <button
-                      type="button"
-                      onClick={() => setGuests((g) => Math.min(maxGuests, g + 1))}
-                      disabled={guests >= maxGuests}
-                      aria-label="Tăng số người"
-                      className="flex h-11 w-11 items-center justify-center rounded-full border border-olive/25 text-olive transition hover:bg-olive hover:text-warm disabled:opacity-30"
-                    >
-                      <Plus className="h-4 w-4" />
-                    </button>
-                    <span className="text-sm text-forest/55">người (kể cả bạn)</span>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+              <fieldset>
+                <legend className={LABEL}>Bạn sẽ đến chứ? *</legend>
+                <div className="grid grid-cols-2 gap-3">
+                  {(
+                    [
+                      { value: 'yes', label: 'Sẽ tham dự', icon: Heart },
+                      { value: 'no', label: 'Không thể đến', icon: X },
+                    ] as const
+                  ).map(({ value, label, icon: Icon }) => {
+                    const active = attendance === value;
+                    return (
+                      <button
+                        key={value}
+                        type="button"
+                        onClick={() => setAttendance(value)}
+                        aria-pressed={active}
+                        className={`flex min-h-12 items-center justify-center gap-2 border px-3 py-2.5 text-sm transition-all duration-300 ${
+                          active
+                            ? 'border-olive-deep bg-olive-deep text-warm'
+                            : 'border-olive/25 bg-transparent text-forest/75 hover:border-olive/60'
+                        }`}
+                      >
+                        <Icon className="h-4 w-4" strokeWidth={1.5} fill={active && value === 'yes' ? 'currentColor' : 'none'} />
+                        {label}
+                      </button>
+                    );
+                  })}
+                </div>
+                {errors.attendance && <span className={ERROR_TEXT}>{errors.attendance}</span>}
+              </fieldset>
 
-            <label className="block">
-              <span className={LABEL}>Lời chúc</span>
-              <textarea
-                className="field min-h-24 resize-none"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                placeholder="Gửi đôi lời chúc tới cô dâu chú rể…"
-                maxLength={400}
-                rows={3}
+              <AnimatePresence initial={false}>
+                {attendance === 'yes' && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="overflow-hidden"
+                  >
+                    <span className={LABEL}>Số người tham dự</span>
+                    <div className="flex items-center gap-4">
+                      <button
+                        type="button"
+                        onClick={() => setGuests((g) => Math.max(1, g - 1))}
+                        disabled={guests <= 1}
+                        aria-label="Giảm số người"
+                        className="flex h-11 w-11 items-center justify-center rounded-full border border-olive/25 text-olive transition hover:bg-olive hover:text-warm disabled:opacity-30"
+                      >
+                        <Minus className="h-4 w-4" />
+                      </button>
+                      <output className="w-10 text-center font-serif text-3xl tabular-nums" aria-live="polite">
+                        {guests}
+                      </output>
+                      <button
+                        type="button"
+                        onClick={() => setGuests((g) => Math.min(maxGuests, g + 1))}
+                        disabled={guests >= maxGuests}
+                        aria-label="Tăng số người"
+                        className="flex h-11 w-11 items-center justify-center rounded-full border border-olive/25 text-olive transition hover:bg-olive hover:text-warm disabled:opacity-30"
+                      >
+                        <Plus className="h-4 w-4" />
+                      </button>
+                      <span className="text-sm text-forest/55">người (kể cả bạn)</span>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              <label className="block">
+                <span className={LABEL}>Lời chúc</span>
+                <textarea
+                  className="field min-h-24 resize-none"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="Gửi đôi lời chúc tới cô dâu chú rể…"
+                  maxLength={400}
+                  rows={3}
+                />
+              </label>
+
+              {/* Ô bẫy chống bot: người thật không thấy và không điền */}
+              <input
+                type="text"
+                name="website"
+                value={honeypot}
+                onChange={(e) => setHoneypot(e.target.value)}
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden="true"
+                className="absolute -left-[9999px] h-0 w-0 opacity-0"
               />
-            </label>
 
-            {/* Ô bẫy chống bot: người thật không thấy và không điền */}
-            <input
-              type="text"
-              name="website"
-              value={honeypot}
-              onChange={(e) => setHoneypot(e.target.value)}
-              tabIndex={-1}
-              autoComplete="off"
-              aria-hidden="true"
-              className="absolute -left-[9999px] h-0 w-0 opacity-0"
-            />
+              {sendError && (
+                <p role="alert" className="rounded-xl bg-[#9b5b4b]/10 px-4 py-3 text-sm leading-relaxed text-forest/85">
+                  {sendError === 'unconfirmed'
+                    ? 'Chưa nhận được phản hồi xác nhận đã lưu. Thông tin bạn điền vẫn được giữ lại; bấm “Gửi lại” để kiểm tra và tránh ghi trùng.'
+                    : 'Chưa lưu được xác nhận. Bạn vui lòng thử lại sau một chút.'}{' '}
+                  Bạn cũng có thể{' '}
+                  <button type="button" onClick={openFallback} className="underline underline-offset-4">
+                    gửi qua Zalo / tin nhắn
+                  </button>{' '}
+                  nhé.
+                </p>
+              )}
 
-            {sendError && (
-              <p role="alert" className="rounded-xl bg-[#9b5b4b]/10 px-4 py-3 text-sm leading-relaxed text-forest/85">
-                Chưa gửi được xác nhận (có thể do mạng yếu). Bạn bấm “Gửi lại” hoặc{' '}
-                <button type="button" onClick={openFallback} className="underline underline-offset-4">
-                  gửi qua Zalo / tin nhắn
-                </button>{' '}
-                nhé.
-              </p>
-            )}
-
-            <Button
-              type="submit"
-              size="lg"
-              className="w-full sm:w-auto"
-              disabled={sending}
-              icon={<Send className="h-4 w-4" strokeWidth={1.5} />}
-            >
-              {sending ? 'Đang gửi…' : sendError ? 'Gửi lại' : sheetReady ? 'Gửi xác nhận' : 'Soạn tin xác nhận'}
-            </Button>
+              <Button
+                type="submit"
+                size="lg"
+                className="w-full sm:w-auto"
+                disabled={sending}
+                icon={<Send className="h-4 w-4" strokeWidth={1.5} />}
+              >
+                {sending ? 'Đang lưu xác nhận…' : sendError ? 'Gửi lại' : sheetReady ? 'Gửi xác nhận' : 'Soạn tin xác nhận'}
+              </Button>
+            </fieldset>
           </motion.form>
         ) : (
           <motion.div key="preview" {...PANEL_MOTION}>

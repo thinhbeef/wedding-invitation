@@ -127,7 +127,7 @@ export const weddingInfo: WeddingInfo = {
 };
 
 /** Nhạc nền – chỉ dùng nhạc bạn có quyền sử dụng. */
-export const musicSrc = `${import.meta.env.BASE_URL}music/wedding-music.mp3`;
+export const musicSrc = `${import.meta.env.BASE_URL}music/A%20Thousand%20Years.mp3`;
 
 /* ------------------------------------------------------------------ */
 /*  01 · ẢNH BÌA                                                       */
@@ -190,18 +190,17 @@ export const dressCode: DressCode = {
 };
 
 /* ------------------------------------------------------------------ */
-/*  07 · ALBUM – ảnh đầu tiên là ảnh lớn                               */
+/*  07 · ALBUM – giữ tỷ lệ ảnh gốc                                     */
 /* ------------------------------------------------------------------ */
 
 export const gallery: GalleryImage[] = [
   { id: 'gallery-01', src: '/images/couple-01-opt.jpg', caption: 'Chúng mình của hôm nay', alt: 'Cô dâu chú rể trong trang phục cưới', aspectRatio: 'tall' },
   { id: 'gallery-02', src: '/images/couple-02-opt.jpg', caption: 'Nụ cười của em', alt: 'Cô dâu chú rể trong trang phục cưới', aspectRatio: 'tall' },
   { id: 'gallery-03', src: '/images/couple-03-opt.jpg', caption: 'Bình yên bên anh', alt: 'Cô dâu chú rể trong trang phục cưới', aspectRatio: 'tall' },
-  { id: 'gallery-04', src: '/images/gallery-04-opt.jpg', caption: 'Chung một lối đi', alt: 'Khung ảnh cưới đang chờ ảnh', aspectRatio: 'portrait' },
-  { id: 'gallery-05', src: '/images/gallery-05-opt.jpg', caption: 'Nắm tay thật chặt', alt: 'Khung ảnh cưới đang chờ ảnh', aspectRatio: 'landscape' },
-  { id: 'gallery-06', src: '/images/gallery-06-opt.jpg', caption: 'Hẹn bạn ngày 06.12', alt: 'Khung ảnh cưới đang chờ ảnh', aspectRatio: 'square' },
-  { id: 'gallery-07', src: '/images/gallery-07-opt.jpg', caption: '', alt: 'Khung ảnh cưới đang chờ ảnh', aspectRatio: 'tall' },
-  { id: 'gallery-08', src: '/images/gallery-08-opt.jpg', caption: '', alt: 'Khung ảnh cưới đang chờ ảnh', aspectRatio: 'portrait' },
+  { id: 'gallery-04', src: '/images/gallery-04-opt.jpg', caption: 'Chung một lối đi', alt: 'Cô dâu chú rể bên đài phun nước', aspectRatio: 'landscape' },
+  { id: 'gallery-05', src: '/images/gallery-05-opt.jpg', caption: 'Nắm tay thật chặt', alt: 'Cô dâu chú rể trên bậc thềm', aspectRatio: 'landscape' },
+  { id: 'gallery-06', src: '/images/gallery-06-opt.jpg', caption: 'Hẹn bạn ngày 06.12', alt: 'Cô dâu chú rể giữa khung cảnh núi đồi', aspectRatio: 'tall' },
+  { id: 'gallery-07', src: '/images/gallery-07-opt.jpg', caption: '', alt: 'Cô dâu chú rể dưới tán thông', aspectRatio: 'tall' },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -211,7 +210,7 @@ export const gallery: GalleryImage[] = [
 export const rsvp = {
   title: 'Xác nhận tham dự & gửi lời chúc',
   /** Hiện khi đã cấu hình `sheetUrl` */
-  note: 'Xác nhận và lời chúc của bạn sẽ được gửi thẳng đến cô dâu chú rể.',
+  note: 'Bạn điền thông tin và bấm “Gửi xác nhận”. Chúng mình sẽ nhận được đăng ký và lời chúc của bạn.',
   /** Hiện khi CHƯA cấu hình `sheetUrl` (khách tự gửi qua Zalo / tin nhắn) */
   noteFallback: 'Lời chúc sẽ được soạn thành tin nhắn để bạn gửi qua Zalo.',
   maxGuests: 10,

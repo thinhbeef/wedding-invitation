@@ -9,16 +9,16 @@ const RATIO: Record<ImageAspect, number> = { portrait: 4 / 5, landscape: 3 / 2, 
 function GalleryTile({ image, index, onOpen }: { image: GalleryImage; index: number; onOpen: () => void }) {
   return (
     <Reveal
-      className={index === 0 ? 'col-span-2 sm:col-span-2' : ''}
-      effect={index === 0 ? 'scale' : 'up'}
-      delay={Math.min(index * 0.1, 0.5)}
+      className="gallery-tile"
+      effect="up"
+      delay={Math.min(index * 0.06, 0.2)}
     >
       <figure>
         <button
           type="button"
           onClick={onOpen}
-          aria-label={`Xem ảnh: ${image.caption}`}
-          className="group block w-full overflow-hidden border border-olive/20 bg-ivory"
+          aria-label={`Xem ảnh: ${image.caption || image.alt}`}
+          className="gallery-button group"
           style={{ aspectRatio: String(RATIO[image.aspectRatio]) }}
         >
           <ImageWithFallback
@@ -55,12 +55,12 @@ export function GallerySection() {
   if (gallery.length === 0) return null;
 
   return (
-    <section id="gallery" data-nav="gallery" className="bg-warm py-20 sm:py-28">
-      <div className="px-5">
+    <section id="gallery" data-nav="gallery" className="section-space bg-warm">
+      <div>
         <SectionTitle script="Our Moments" title="Khoảnh khắc của chúng mình" />
       </div>
 
-      <div className="mx-auto mt-12 grid max-w-5xl grid-cols-2 items-start gap-x-3 gap-y-6 px-5 sm:mt-16 sm:grid-cols-3 sm:gap-x-5 sm:gap-y-8">
+      <div className="gallery-layout">
         {gallery.map((image, i) => (
           <GalleryTile key={image.id} image={image} index={i} onOpen={() => open(i)} />
         ))}

@@ -1,17 +1,16 @@
 import { motion } from 'framer-motion';
 import { Clock, Gem, Sparkles, Wine } from 'lucide-react';
-import { schedule, weddingInfo } from '../data/weddingData';
-import { getMapsUrl } from '../utils/messaging';
+import { schedule } from '../data/weddingData';
 import { Reveal, SectionTitle } from '../components/layout/Section';
 
 const ICONS = { arrival: Clock, ceremony: Gem, reception: Wine, other: Sparkles } as const;
 
 export function ScheduleSection() {
   return (
-    <section data-nav="wedding" className="bg-ivory px-5 py-20 sm:py-28">
+    <section data-nav="wedding" className="section-space bg-ivory">
       <SectionTitle script="Wedding Day" title="Lịch trình ngày cưới" />
 
-      <ol className="relative mx-auto mt-14 max-w-md">
+      <ol className="relative mx-auto mt-10 max-w-md">
         <motion.span
           className="absolute top-2 bottom-2 left-[1.15rem] w-px origin-top bg-olive/30"
           aria-hidden="true"
@@ -43,19 +42,6 @@ export function ScheduleSection() {
         })}
       </ol>
 
-      <Reveal className="mx-auto mt-14 max-w-md border-t border-olive/20 pt-8 text-center">
-        <p className="eyebrow">Địa điểm</p>
-        <p className="mt-2 font-serif text-2xl">{weddingInfo.venue}</p>
-        <p className="mt-1 text-sm text-forest/65">{weddingInfo.address}</p>
-        <a
-          href={getMapsUrl()}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-5 inline-block bg-olive-deep px-7 py-3 text-xs font-medium tracking-[0.25em] text-warm uppercase transition hover:bg-forest"
-        >
-          Chỉ đường
-        </a>
-      </Reveal>
     </section>
   );
 }

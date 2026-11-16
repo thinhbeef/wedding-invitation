@@ -1,5 +1,8 @@
 node_modules
 dist
+.vercel
+wedding-repo/
+.env*.local
 *.log
 .DS_Store
 /public/images/cover.jpg
