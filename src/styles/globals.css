@@ -1,0 +1,96 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-ivory: #f5f2e9;
+  --color-warm: #fffefa;
+  --color-mist: #e8ebdd;
+  --color-sage: #b8c3aa;
+  --color-olive: #78866c;
+  --color-olive-deep: #5a6850;
+  --color-forest: #343b30;
+  --color-champagne: #d6c3a0;
+  --color-blush: #e8cbb9;
+
+  --font-serif: 'Cormorant Garamond', 'Times New Roman', serif;
+  --font-sans: 'Be Vietnam Pro', system-ui, sans-serif;
+  --font-script: 'Great Vibes', cursive;
+
+  --ease-silk: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+:root {
+  --nav-space: calc(5.5rem + env(safe-area-inset-bottom));
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  overflow-x: hidden;
+  background: var(--color-ivory);
+  color: var(--color-forest);
+  font-family: var(--font-sans);
+  font-weight: 400;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  background: rgb(214 195 160 / 0.5);
+}
+
+section[id] {
+  scroll-margin-top: 0;
+}
+
+.eyebrow {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--color-olive-deep);
+}
+
+.field {
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid rgb(120 134 108 / 0.35);
+  background: transparent;
+  padding: 0.7rem 0.1rem;
+  font-size: 1rem;
+  color: var(--color-forest);
+  outline: none;
+  border-radius: 0;
+  transition: border-color 0.25s;
+}
+.field::placeholder {
+  color: rgb(52 59 48 / 0.35);
+}
+.field:focus {
+  border-color: var(--color-olive);
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

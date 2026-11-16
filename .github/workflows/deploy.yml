@@ -1,0 +1,53 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main, nha-gai]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: main, path: main }
+      - uses: actions/checkout@v4
+        with: { ref: nha-gai, path: nha-gai }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - uses: actions/configure-pages@v5
+      - name: Build nhà trai
+        working-directory: main
+        env: { VITE_BASE: /wedding-invitation/ }
+        run: npm ci && npm run build
+      - name: Build nhà gái
+        working-directory: nha-gai
+        env: { VITE_BASE: /wedding-invitation/nha-gai/ }
+        run: npm ci && npm run build
+      - name: Gộp hai bản
+        run: |
+          mkdir site
+          cp -r main/dist/. site/
+          mkdir site/nha-gai
+          cp -r nha-gai/dist/. site/nha-gai/
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: site }
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
