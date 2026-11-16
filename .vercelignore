@@ -1,4 +1,8 @@
 wedding-repo
+node_modules
+dist
+.vercel
+.env*
 .vscode
 .codex
 .agents

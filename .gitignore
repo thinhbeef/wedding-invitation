@@ -12,3 +12,6 @@ wedding-repo/
 /public/images/VIET*.jpg
 .vscode/*
 !.vscode/extensions.json
+
+.vercel
+.env*
