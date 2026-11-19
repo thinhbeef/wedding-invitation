@@ -1,5 +1,5 @@
 import { rsvp } from '../data/weddingData';
-import type { RsvpPayload } from './messaging';
+import { buildSheetMessage, type RsvpPayload } from './messaging';
 
 const SHEET_URL_PATTERN = /^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/;
 const TIMEOUT_MS = 25000;
@@ -8,6 +8,17 @@ export type RsvpSubmissionResult =
   | { status: 'saved' }
   | { status: 'rejected' }
   | { status: 'unconfirmed' };
+
+export interface GuestWish {
+  id: string;
+  name: string;
+  message: string;
+}
+
+export interface WishesPage {
+  wishes: GuestWish[];
+  nextCursor: number | null;
+}
 
 /** Đã dán link Apps Script hợp lệ vào `rsvp.sheetUrl` chưa. */
 export function isSheetConfigured(): boolean {
@@ -20,14 +31,59 @@ export function createSubmissionId(): string {
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
 }
 
-async function withTimeout<T>(run: (signal: AbortSignal) => Promise<T>): Promise<T> {
+async function withTimeout<T>(run: (signal: AbortSignal) => Promise<T>, externalSignal?: AbortSignal): Promise<T> {
   const controller = new AbortController();
+  const cancel = () => controller.abort();
+  externalSignal?.addEventListener('abort', cancel, { once: true });
+  if (externalSignal?.aborted) cancel();
   const timer = window.setTimeout(() => controller.abort(), TIMEOUT_MS);
   try {
     return await run(controller.signal);
   } finally {
     window.clearTimeout(timer);
+    externalSignal?.removeEventListener('abort', cancel);
   }
+}
+
+/** Đọc lời chúc đã lưu từ cùng Web App, dùng được trên mọi thiết bị. */
+export async function fetchWishesFromSheet(cursor: number | null = null, signal?: AbortSignal): Promise<WishesPage> {
+  if (!isSheetConfigured()) throw new Error('sheet-not-configured');
+  const url = new URL(rsvp.sheetUrl.trim());
+  url.searchParams.set('action', 'wishes');
+  if (cursor !== null) url.searchParams.set('cursor', String(cursor));
+
+  return withTimeout(async (requestSignal) => {
+    const response = await fetch(url, {
+      mode: 'cors',
+      credentials: 'omit',
+      redirect: 'follow',
+      cache: 'no-store',
+      signal: requestSignal,
+    });
+    const result: unknown = await response.json();
+    // Script cũ chỉ trả health check: không được hiểu nhầm là sổ lưu bút trống.
+    if (!response.ok || !result || typeof result !== 'object'
+      || !('ok' in result) || result.ok !== true
+      || !('wishes' in result) || !Array.isArray(result.wishes)
+      || !('nextCursor' in result)
+      || !(result.nextCursor === null || (typeof result.nextCursor === 'number'
+        && Number.isSafeInteger(result.nextCursor) && result.nextCursor >= 2
+        && (cursor === null || result.nextCursor < cursor)))) {
+      throw new Error('invalid-wishes-response');
+    }
+
+    const wishes = result.wishes.map((wish: unknown): GuestWish => {
+      if (!wish || typeof wish !== 'object'
+        || !('id' in wish) || typeof wish.id !== 'string' || !wish.id.trim()
+        || !('name' in wish) || typeof wish.name !== 'string' || !wish.name.trim()
+        || !('message' in wish) || typeof wish.message !== 'string' || !wish.message.trim()) {
+        throw new Error('invalid-wish');
+      }
+      return { id: wish.id, name: wish.name, message: wish.message };
+    });
+
+    return { wishes, nextCursor: result.nextCursor };
+  }, signal);
 }
 
 /**
@@ -51,7 +107,7 @@ export async function submitRsvpToSheet(data: RsvpPayload, submissionId: string,
       phone: data.phone.trim(),
       attendance: data.attendance,
       guests: data.attendance === 'yes' ? data.guests : 0,
-      message: data.message.trim(),
+      message: buildSheetMessage(data),
       website: honeypot,
     }),
   } satisfies RequestInit;

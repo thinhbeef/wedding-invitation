@@ -9,7 +9,7 @@ export function StorySection() {
   const reducedMotion = useReducedMotion();
   return (
     <section id="story" data-nav="story" className="section-space story-section bg-warm">
-      <SectionTitle script="Our Story" title="Chuyện của chúng mình" />
+      <SectionTitle script="Our Story" title="Đôi lời từ Thịnh & Ý" />
       <div className="story-polaroids">
         {story.photos.map((photo, i) => (
           <motion.figure

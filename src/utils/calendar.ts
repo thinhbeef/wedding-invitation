@@ -1,4 +1,5 @@
-import { weddingInfo } from '../data/weddingData';
+import { weddingInfo, displayCouple } from '../data/weddingData';
+import { invitationVariant } from '../data/invitationVariant';
 import { getWeddingTimestamp } from './date';
 import { getMapsUrl } from './messaging';
 
@@ -11,12 +12,12 @@ function escapeIcs(text: string): string {
 }
 
 /** Tạo nội dung file .ics (chuẩn iCalendar) hoàn toàn ở phía trình duyệt. */
-export function buildIcs(): string {
-  const start = getWeddingTimestamp();
+export function buildIcs(time: string = weddingInfo.time): string {
+  const start = getWeddingTimestamp(time);
   const end = start + weddingInfo.durationHours * 60 * 60 * 1000;
-  const { groom, bride, venue, address } = weddingInfo;
-  const title = `Lễ cưới ${groom.name} & ${bride.name}`;
-  const description = `Trân trọng kính mời bạn đến chung vui cùng ${groom.name} & ${bride.name}.\nBản đồ: ${getMapsUrl()}`;
+  const { venue, address } = weddingInfo;
+  const title = `Tiệc mừng ${invitationVariant.ceremony.toLocaleLowerCase('vi-VN')} ${displayCouple[0].name} & ${displayCouple[1].name}`;
+  const description = `Trân trọng kính mời quý khách đến chung vui cùng ${displayCouple[0].name} & ${displayCouple[1].name}.\nBản đồ: ${getMapsUrl()}`;
 
   const lines = [
     'BEGIN:VCALENDAR',
@@ -43,8 +44,8 @@ export function buildIcs(): string {
   return lines.join('\r\n');
 }
 
-export function downloadIcs(): void {
-  const blob = new Blob([buildIcs()], { type: 'text/calendar;charset=utf-8' });
+export function downloadIcs(time: string = weddingInfo.time): void {
+  const blob = new Blob([buildIcs(time)], { type: 'text/calendar;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;

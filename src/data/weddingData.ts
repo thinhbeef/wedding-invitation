@@ -13,6 +13,7 @@
 
 import type { LucideIcon } from 'lucide-react';
 import { BookHeart, CalendarHeart, House, Images, MailCheck } from 'lucide-react';
+import { invitationVariant } from './invitationVariant';
 
 /* ------------------------------------------------------------------ */
 /*  KIỂU DỮ LIỆU                                                       */
@@ -33,7 +34,7 @@ export interface WeddingInfo {
   bride: Person;
   /** Ngày cưới: YYYY-MM-DD */
   date: string;
-  /** Giờ làm lễ: HH:mm (24h) – dùng cho đếm ngược và lịch */
+  /** Giờ đón khách: HH:mm (24h) – dùng cho đếm ngược và lịch */
   time: string;
   timezone: string;
   /** Độ lệch UTC của múi giờ trên (Việt Nam: +07:00) */
@@ -113,18 +114,22 @@ export const weddingInfo: WeddingInfo = {
     mother: 'La Bích Thủy',
     home: 'Xã Hòa Bình, Tỉnh Cà Mau',
   },
-  date: '2026-12-06',
-  // [Giờ tổ chức] – 11:00 là GIỜ MẪU, hãy thay bằng giờ thật
-  time: '11:00',
+  date: invitationVariant.isBride ? '2026-12-05' : '2026-12-06',
+  // Đón khách lúc 11:00, khai tiệc lúc 11:30.
+  time: invitationVariant.isBride ? invitationVariant.session?.time ?? '10:30' : '11:00',
   timezone: 'Asia/Ho_Chi_Minh',
   utcOffset: '+07:00',
   durationHours: 3,
-  venue: 'Nhà Hàng - Khách Sạn Diamond Bạc Liêu',
-  address: '36 Trần Huỳnh, Phường Bạc Liêu, Tỉnh Cà Mau',
-  mapsUrl: '[Link Google Maps]',
+  venue: invitationVariant.isBride ? 'Tư gia nhà gái' : 'Nhà Hàng - Khách Sạn Diamond Bạc Liêu',
+  address: invitationVariant.isBride ? '08 Lê Quý Đôn, Xã Hòa Bình, Tỉnh Cà Mau' : '36 Trần Huỳnh, Phường Bạc Liêu, Tỉnh Cà Mau',
+  mapsUrl: invitationVariant.isBride ? 'https://www.google.com/maps/dir/?api=1&destination=9.281501038003864,105.63046603874042' : '[Link Google Maps]',
   phone: '[Số điện thoại]',
   zalo: '[Link hoặc số Zalo]',
 };
+
+export const displayCouple = invitationVariant.isBride
+  ? [weddingInfo.bride, weddingInfo.groom] as const
+  : [weddingInfo.groom, weddingInfo.bride] as const;
 
 /** Nhạc nền – chỉ dùng nhạc bạn có quyền sử dụng. */
 export const musicSrc = `${import.meta.env.BASE_URL}music/A%20Thousand%20Years.mp3`;
@@ -135,9 +140,9 @@ export const musicSrc = `${import.meta.env.BASE_URL}music/A%20Thousand%20Years.m
 
 export const hero = {
   // cover-web.jpg là bản nén (2000px) của cover.jpg để trang tải nhanh
-  image: '/images/cover-web.jpg',
+  image: '/images/cover-web.jpg?v=129fddee59c6',
   focus: '50% 38%',
-  tagline: "We're getting married",
+  tagline: invitationVariant.ceremony,
 };
 
 /* ------------------------------------------------------------------ */
@@ -146,32 +151,32 @@ export const hero = {
 
 export const invitation = {
   greeting: 'Trân trọng kính mời',
-  lead: 'Tới dự buổi tiệc chung vui cùng gia đình chúng tôi',
-  message: 'Sự hiện diện của quý khách là niềm vinh hạnh cho gia đình chúng tôi.',
+  lead: `Đến dự tiệc mừng ${invitationVariant.ceremony.toLocaleLowerCase('vi-VN')} của`,
+  message: 'Sự hiện diện của quý khách là niềm vinh hạnh của gia đình và niềm vui trọn vẹn của đôi uyên ương.',
 };
 
 /* ------------------------------------------------------------------ */
-/*  03 · CÂU CHUYỆN (placeholder – hãy viết lại bằng lời của bạn)       */
+/*  03 · LỜI NHẮN CỦA CÔ DÂU CHÚ RỂ                                   */
 /* ------------------------------------------------------------------ */
 
 export const story: { intro: string; photos: Photo[] } = {
   intro:
-    'Giữa bao nhiêu người đi qua đời nhau, chúng mình đã tìm thấy nhau. Không ồn ào, chỉ là những ngày bình thường có nhau, rồi chính những ngày ấy hóa thành điều đặc biệt nhất. Ngày 06.12 này, chúng mình chính thức bước tiếp quãng đường còn lại bằng một cái nắm tay, và thật vui nếu có bạn ở đó.',
+    `Ngày ${invitationVariant.isBride ? '5' : '6'} tháng 12, ${displayCouple[0].name} và ${displayCouple[1].name} sẽ cùng nhau bước sang một chặng đường mới. Chúng mình mong được đón những người thân yêu đến chung vui, gửi trao lời chúc và lưu lại những khoảnh khắc đẹp trong ngày hạnh phúc.`,
+  // Ba file story-* chỉ dùng ở phần này; thay ảnh tại đây không đổi album.
   photos: [
-    { src: '/images/couple-01-opt.jpg', alt: 'Cô dâu chú rể', caption: 'Bắt đầu từ đây' },
-    { src: '/images/couple-02-opt.jpg', alt: 'Cô dâu chú rể', caption: 'Những ngày có nhau' },
-    { src: '/images/couple-03-opt.jpg', alt: 'Cô dâu chú rể', caption: 'Một nhà, một đời' },
+    { src: '/images/story-01-opt.jpg?v=8911e0145a42', alt: 'Cô dâu chú rể', caption: 'Thịnh & Ý' },
+    { src: '/images/story-02-opt.jpg?v=4046ba4bf68c', alt: 'Cô dâu chú rể', caption: 'Ngày mình có nhau' },
+    { src: '/images/story-03-opt.jpg?v=51ea2c371c98', alt: 'Cô dâu chú rể', caption: invitationVariant.isBride ? '05.12.2026' : '06.12.2026' },
   ],
 };
 
 /* ------------------------------------------------------------------ */
-/*  05 · LỊCH TRÌNH (giờ là GIỜ MẪU)                                   */
+/*  05 · LỊCH TRÌNH NHÀ TRAI                                           */
 /* ------------------------------------------------------------------ */
 
 export const schedule: ScheduleItem[] = [
-  { id: 'arrival', time: '10:30', title: 'Đón khách', description: 'Chào đón quý khách và chụp ảnh lưu niệm.', icon: 'arrival' },
-  { id: 'ceremony', time: '11:00', title: 'Lễ cưới', description: 'Nghi lễ thành hôn của cô dâu và chú rể.', icon: 'ceremony' },
-  { id: 'reception', time: '11:30', title: 'Khai tiệc', description: 'Cùng nâng ly và chung vui bữa tiệc.', icon: 'reception' },
+  { id: 'arrival', time: '11:00', title: 'Đón khách', description: 'Chào đón quý khách và chụp ảnh lưu niệm.', icon: 'arrival' },
+  { id: 'reception', time: '11:30', title: 'Khai tiệc', description: 'Kính mời quý khách dùng tiệc và chung vui cùng gia đình.', icon: 'reception' },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -194,13 +199,12 @@ export const dressCode: DressCode = {
 /* ------------------------------------------------------------------ */
 
 export const gallery: GalleryImage[] = [
-  { id: 'gallery-01', src: '/images/couple-01-opt.jpg', caption: 'Chúng mình của hôm nay', alt: 'Cô dâu chú rể trong trang phục cưới', aspectRatio: 'tall' },
-  { id: 'gallery-02', src: '/images/couple-02-opt.jpg', caption: 'Nụ cười của em', alt: 'Cô dâu chú rể trong trang phục cưới', aspectRatio: 'tall' },
-  { id: 'gallery-03', src: '/images/couple-03-opt.jpg', caption: 'Bình yên bên anh', alt: 'Cô dâu chú rể trong trang phục cưới', aspectRatio: 'tall' },
-  { id: 'gallery-04', src: '/images/gallery-04-opt.jpg', caption: 'Chung một lối đi', alt: 'Cô dâu chú rể bên đài phun nước', aspectRatio: 'landscape' },
-  { id: 'gallery-05', src: '/images/gallery-05-opt.jpg', caption: 'Nắm tay thật chặt', alt: 'Cô dâu chú rể trên bậc thềm', aspectRatio: 'landscape' },
-  { id: 'gallery-06', src: '/images/gallery-06-opt.jpg', caption: 'Hẹn bạn ngày 06.12', alt: 'Cô dâu chú rể giữa khung cảnh núi đồi', aspectRatio: 'tall' },
-  { id: 'gallery-07', src: '/images/gallery-07-opt.jpg', caption: '', alt: 'Cô dâu chú rể dưới tán thông', aspectRatio: 'tall' },
+  { id: 'gallery-03', src: '/images/couple-03-opt.jpg?v=8911e0145a42', caption: '', alt: 'Cô dâu chú rể trong trang phục cưới', aspectRatio: 'tall' },
+  { id: 'gallery-01', src: '/images/couple-01-opt.jpg?v=51ea2c371c98', caption: '', alt: 'Cô dâu chú rể trong trang phục cưới', aspectRatio: 'tall' },
+  { id: 'gallery-06', src: '/images/gallery-06-opt.jpg?v=4b1e032f4b9e', caption: '', alt: 'Cô dâu và chú rể bên nhau trong khu vườn', aspectRatio: 'tall' },
+  { id: 'gallery-04', src: '/images/gallery-center-opt.jpg?v=784e579d0b49', caption: '', alt: 'Cô dâu và chú rể bên nhau giữa núi đồi', aspectRatio: 'tall' },
+  { id: 'gallery-02', src: '/images/couple-02-opt.jpg?v=f0a538fe8fcc', caption: '', alt: 'Cô dâu chú rể trong trang phục cưới', aspectRatio: 'tall' },
+  { id: 'gallery-07', src: '/images/gallery-07-opt.jpg?v=28272e8cbd23', caption: '', alt: 'Cô dâu và chú rể dưới khăn voan giữa núi đồi', aspectRatio: 'tall' },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -208,19 +212,19 @@ export const gallery: GalleryImage[] = [
 /* ------------------------------------------------------------------ */
 
 export const rsvp = {
-  title: 'Xác nhận tham dự & gửi lời chúc',
+  title: 'Xác nhận tham dự',
   /** Hiện khi đã cấu hình `sheetUrl` */
-  note: 'Bạn điền thông tin và bấm “Gửi xác nhận”. Chúng mình sẽ nhận được đăng ký và lời chúc của bạn.',
+  note: 'Kính mong quý khách xác nhận tham dự và số người đi cùng để gia đình chuẩn bị đón tiếp chu đáo.',
   /** Hiện khi CHƯA cấu hình `sheetUrl` (khách tự gửi qua Zalo / tin nhắn) */
-  noteFallback: 'Lời chúc sẽ được soạn thành tin nhắn để bạn gửi qua Zalo.',
+  noteFallback: 'Quý khách vui lòng điền thông tin bên dưới để soạn tin xác nhận và gửi đến gia đình qua Zalo hoặc tin nhắn.',
   maxGuests: 10,
   /**
    * Link Google Apps Script Web App (kết thúc bằng /exec) ghi xác nhận vào Google Sheet.
    * Hướng dẫn tạo: HUONG-DAN-GOOGLE-SHEET.md. Để chuỗi rỗng '' thì form dùng cách cũ (gửi qua Zalo / SMS).
    */
   sheetUrl: 'https://script.google.com/macros/s/AKfycbwdpLltXBS1rJrkFcIz_jn2_9HtHFeSNLTqb-ebuhkD-eAxHKJA0sQgKym5sRqYSobyqQ/exec',
-  /** Ghi vào cột "Bên" của Sheet – bản nhà gái đặt 'Nhà gái' */
-  side: 'Nhà trai',
+  /** Ghi vào cột "Bên" của Sheet – thiệp chính thuộc nhà trai */
+  side: invitationVariant.isBride ? 'Nhà gái' : 'Nhà trai',
 };
 
 /* ------------------------------------------------------------------ */
@@ -230,7 +234,7 @@ export const rsvp = {
 export const thankYou = {
   image: '/images/thankyou.jpg',
   title: 'Thank you',
-  message: 'Cảm ơn bạn đã dành thời gian cho thiệp mời của chúng mình. Sự hiện diện của bạn là món quà ý nghĩa nhất.',
+  message: `Cảm ơn quý khách đã dành tình cảm và những lời chúc tốt đẹp cho ${displayCouple[0].name} và ${displayCouple[1].name}. Gia đình rất mong được đón tiếp quý khách trong ngày vui.`,
 };
 
 /* ------------------------------------------------------------------ */

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { MotionConfig } from 'framer-motion';
 import { musicSrc, type SectionId } from './data/weddingData';
+import { invitationVariant } from './data/invitationVariant';
 import { useBackgroundMusic } from './hooks/useBackgroundMusic';
 import { MusicPlayer } from './components/common/MusicPlayer';
 import { BottomNav } from './components/navigation/BottomNav';
@@ -62,7 +63,7 @@ export default function App() {
           <InvitationSection />
           <StorySection />
           <CountdownSection />
-          <ScheduleSection />
+          {!invitationVariant.isBride && <ScheduleSection />}
           <DressCodeSection />
           <GallerySection />
           <RSVPSection />

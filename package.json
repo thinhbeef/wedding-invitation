@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
+    "build:releases": "tsc --noEmit && node scripts/build-releases.mjs",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit"
   },

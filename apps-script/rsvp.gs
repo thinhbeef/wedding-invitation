@@ -13,6 +13,8 @@ const FORMATS = ['@', '@', '@', '@', '@', '0', '@', '@'];
 const ID_COL = HEADERS.length;
 const TIMEZONE = 'Asia/Ho_Chi_Minh';
 const RECENT_ROWS = 300; // chỉ so mã gửi với 300 dòng gần nhất để chống ghi trùng
+const WISHES_PAGE_SIZE = 20;
+const WISHES_SCAN_SIZE = 200;
 
 function doPost(e) {
   const lock = LockService.getScriptLock();
@@ -59,9 +61,47 @@ function doPost(e) {
   }
 }
 
-/** Mở link /exec trên trình duyệt để kiểm tra nhanh Web app đang chạy. */
-function doGet() {
-  return reply_({ ok: true, service: 'wedding-rsvp' });
+/** /exec kiểm tra kết nối; /exec?action=wishes đọc sổ lưu bút công khai. */
+function doGet(e) {
+  const params = (e && e.parameter) || {};
+  if (!params.action) return reply_({ ok: true, service: 'wedding-rsvp' });
+  if (params.action !== 'wishes') return reply_({ ok: false, error: 'invalid' });
+
+  try {
+    const cursor = params.cursor == null ? null : Number(params.cursor);
+    if (cursor !== null && (!Number.isSafeInteger(cursor) || cursor < 2)) {
+      return reply_({ ok: false, error: 'invalid' });
+    }
+
+    // Chỉ đọc: không tạo hay thay đổi Sheet khi khách mở sổ lưu bút.
+    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
+    if (!sheet || sheet.getLastRow() < 2) return reply_({ ok: true, wishes: [], nextCursor: null });
+
+    let nextRow = Math.min(cursor === null ? sheet.getLastRow() : cursor, sheet.getLastRow());
+    const wishes = [];
+
+    // Duyệt ngược để lời chúc mới nhất đứng đầu. Bỏ qua các xác nhận không có lời chúc.
+    // Cursor là số dòng, nên các lời chúc mới không làm dịch trang đang xem.
+    while (nextRow >= 2 && wishes.length < WISHES_PAGE_SIZE) {
+      const firstRow = Math.max(2, nextRow - WISHES_SCAN_SIZE + 1);
+      const rows = sheet.getRange(firstRow, 3, nextRow - firstRow + 1, 5).getDisplayValues();
+      for (let i = rows.length - 1; i >= 0 && wishes.length < WISHES_PAGE_SIZE; i--) {
+        const rowNumber = firstRow + i;
+        nextRow = rowNumber - 1;
+        const name = clean_(rows[i][0], 80);
+        const message = publicWish_(rows[i][4]);
+        if (!name || !message) continue;
+
+        // Danh sách công khai chỉ có tên, lời chúc và khóa dòng để hiển thị.
+        // Tuyệt đối không trả số điện thoại, tham dự, số người hay mã gửi.
+        wishes.push({ id: 'wish-' + rowNumber, name: name, message: message });
+      }
+    }
+
+    return reply_({ ok: true, wishes: wishes, nextCursor: nextRow >= 2 ? nextRow : null });
+  } catch (err) {
+    return reply_({ ok: false, error: 'server' });
+  }
 }
 
 /** Chạy hàm này MỘT LẦN trong trình soạn thảo để cấp quyền và tạo sẵn trang tính. */
@@ -96,6 +136,13 @@ function clean_(value, max) {
     .replace(/[\u0000-\u001f\u007f]+/g, ' ')
     .trim()
     .slice(0, max);
+}
+
+/** Bản nhà gái cũ ghi cữ tiệc vào đầu ô lời chúc; thông tin này không thuộc sổ công khai. */
+function publicWish_(value) {
+  return clean_(value, 500)
+    .replace(/^\[(?:Cữ tiệc|Thiệp mời): Cữ (?:trưa|chiều) (?:10:30|16:00) \| \d{2}\/\d{2}\/\d{4}\]\s*/, '')
+    .trim();
 }
 
 function reply_(obj) {

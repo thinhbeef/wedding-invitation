@@ -11,8 +11,10 @@ import {
 } from '../../utils/messaging';
 import { createSubmissionId, isSheetConfigured, submitRsvpToSheet } from '../../utils/rsvpSheet';
 import { Button, LinkButton } from '../common/Button';
+import { displayCouple } from '../../data/weddingData';
+import { invitationVariant, type SessionId } from '../../data/invitationVariant';
 
-type Errors = Partial<Record<'name' | 'phone' | 'attendance', string>>;
+type Errors = Partial<Record<'name' | 'phone' | 'attendance' | 'sessionId', string>>;
 
 const LABEL = 'mb-2 block text-xs font-medium tracking-[0.18em] text-olive-deep uppercase';
 const ERROR_TEXT = 'mt-1.5 block text-xs text-[#9b5b4b]';
@@ -25,9 +27,13 @@ const PANEL_MOTION = {
 
 function validate(data: Omit<RsvpPayload, 'attendance'> & { attendance: Attendance | null }): Errors {
   const errors: Errors = {};
-  if (data.name.trim().length < 2) errors.name = 'Vui lòng nhập họ tên của bạn.';
+  if (data.name.trim().length < 2) errors.name = 'Vui lòng nhập họ và tên.';
   if (data.phone.trim() && !/^[+\d][\d\s.-]{7,15}$/.test(data.phone.trim())) errors.phone = 'Số điện thoại chưa hợp lệ.';
-  if (!data.attendance) errors.attendance = 'Bạn vui lòng chọn một lựa chọn.';
+  if (!data.attendance) errors.attendance = 'Vui lòng cho biết quý khách có thể tham dự hay không.';
+  if (invitationVariant.isBride && data.attendance === 'yes'
+    && !invitationVariant.sessions.some((session) => session.id === data.sessionId)) {
+    errors.sessionId = 'Vui lòng chọn cữ tiệc quý khách sẽ tham dự.';
+  }
   return errors;
 }
 
@@ -42,11 +48,12 @@ export function RSVPForm({ maxGuests }: { maxGuests: number }) {
   const [attendance, setAttendance] = useState<Attendance | null>(null);
   const [guests, setGuests] = useState(1);
   const [message, setMessage] = useState('');
+  const [sessionId, setSessionId] = useState<SessionId | null>(invitationVariant.session?.id ?? null);
   const [honeypot, setHoneypot] = useState('');
   const [errors, setErrors] = useState<Errors>({});
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState<'rejected' | 'unconfirmed' | null>(null);
-  const [sent, setSent] = useState<{ name: string; attendance: Attendance } | null>(null);
+  const [sent, setSent] = useState<{ name: string; attendance: Attendance; hasWish: boolean } | null>(null);
   const [prepared, setPrepared] = useState<string | null>(null);
   const [zaloNote, setZaloNote] = useState<string | null>(null);
   const { copied, copy, flash } = useClipboard();
@@ -67,13 +74,13 @@ export function RSVPForm({ maxGuests }: { maxGuests: number }) {
   const openFallback = () => {
     if (!attendance) return;
     setZaloNote(null);
-    setPrepared(buildRsvpMessage({ name, phone, attendance, guests, message }));
+    setPrepared(buildRsvpMessage({ name, phone, attendance, guests, message, sessionId }));
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (submitting.current) return;
-    const nextErrors = validate({ name, phone, attendance, guests, message });
+    const nextErrors = validate({ name, phone, attendance, guests, message, sessionId });
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length > 0 || !attendance) return;
 
@@ -89,6 +96,7 @@ export function RSVPForm({ maxGuests }: { maxGuests: number }) {
       attendance,
       guests: attendance === 'yes' ? guests : 0,
       message: message.trim(),
+      sessionId,
     };
     const payload = JSON.stringify(data);
     // Retry identical data with the same ID. Edited data must not be mistaken for an old submission.
@@ -101,7 +109,7 @@ export function RSVPForm({ maxGuests }: { maxGuests: number }) {
     setSendError(null);
     try {
       const result = await submitRsvpToSheet(data, lastAttempt.current.id, honeypot);
-      if (result.status === 'saved') setSent({ name: data.name, attendance: data.attendance });
+      if (result.status === 'saved') setSent({ name: data.name, attendance: data.attendance, hasWish: Boolean(data.message) });
       else setSendError(result.status);
     } catch {
       setSendError('unconfirmed');
@@ -117,6 +125,7 @@ export function RSVPForm({ maxGuests }: { maxGuests: number }) {
     setAttendance(null);
     setGuests(1);
     setMessage('');
+    setSessionId(invitationVariant.session?.id ?? null);
     setErrors({});
     setSendError(null);
     setSent(null);
@@ -146,13 +155,18 @@ export function RSVPForm({ maxGuests }: { maxGuests: number }) {
           <motion.div key="sent" ref={focusConfirmation} tabIndex={-1} {...PANEL_MOTION} className="py-4 text-center outline-none" role="status">
             <Heart className="mx-auto h-8 w-8 text-olive" strokeWidth={1.2} fill={sent.attendance === 'yes' ? 'currentColor' : 'none'} />
             <p className="mt-4 font-serif text-2xl">
-              {sent.attendance === 'yes' ? 'Cảm ơn bạn đã xác nhận!' : 'Cảm ơn bạn đã báo cho chúng mình'}
+              {sent.attendance === 'yes' ? 'Cảm ơn quý khách đã xác nhận!' : 'Cảm ơn quý khách đã phản hồi!'}
             </p>
             <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-forest/75">
               {sent.attendance === 'yes'
-                ? `Xác nhận của ${sent.name} đã được lưu. Hẹn gặp bạn tại buổi tiệc nhé.`
-                : `Phản hồi của ${sent.name} đã được lưu. Rất tiếc không được đón bạn, cảm ơn bạn đã báo cho chúng mình.`}
+                ? `Gia đình đã nhận được xác nhận của ${sent.name}. Rất mong được đón tiếp quý khách trong ngày vui!`
+                : `Gia đình đã nhận được phản hồi của ${sent.name}. Cảm ơn quý khách đã dành tình cảm cho cô dâu và chú rể. Mong có dịp gặp lại quý khách!`}
             </p>
+            {sent.hasWish && (
+              <p className="mx-auto mt-3 max-w-sm text-xs leading-relaxed text-olive-deep">
+                Lời chúc của bạn đã được lưu. Bấm “Xem lời chúc” bên dưới để mở sổ lưu bút nhé.
+              </p>
+            )}
             <Button variant="ghost" className="mt-6" onClick={resetForm}>
               Gửi xác nhận khác
             </Button>
@@ -191,7 +205,7 @@ export function RSVPForm({ maxGuests }: { maxGuests: number }) {
               </div>
 
               <fieldset>
-                <legend className={LABEL}>Bạn sẽ đến chứ? *</legend>
+                <legend className={LABEL}>Quý khách có thể tham dự không? *</legend>
                 <div className="grid grid-cols-2 gap-3">
                   {(
                     [
@@ -252,8 +266,27 @@ export function RSVPForm({ maxGuests }: { maxGuests: number }) {
                       >
                         <Plus className="h-4 w-4" />
                       </button>
-                      <span className="text-sm text-forest/55">người (kể cả bạn)</span>
+                      <span className="text-sm text-forest/55">người (bao gồm quý khách)</span>
                     </div>
+                    {invitationVariant.isBride && (
+                      <fieldset className="mt-5">
+                        <legend className={LABEL}>Cữ tiệc tham dự *</legend>
+                        <div className="flex flex-wrap gap-3">
+                          {invitationVariant.sessions.map((session) => (
+                            <button
+                              key={session.id}
+                              type="button"
+                              aria-pressed={sessionId === session.id}
+                              onClick={() => setSessionId(session.id)}
+                              className={`min-h-11 border px-4 py-2 text-sm ${sessionId === session.id ? 'border-olive-deep bg-olive-deep text-warm' : 'border-olive/25 text-forest'}`}
+                            >
+                              {session.displayTime}
+                            </button>
+                          ))}
+                        </div>
+                        {errors.sessionId && <span className={ERROR_TEXT}>{errors.sessionId}</span>}
+                      </fieldset>
+                    )}
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -264,10 +297,16 @@ export function RSVPForm({ maxGuests }: { maxGuests: number }) {
                   className="field min-h-24 resize-none"
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  placeholder="Gửi đôi lời chúc tới cô dâu chú rể…"
+                  placeholder={`Gửi lời chúc đến ${displayCouple[0].name} và ${displayCouple[1].name}…`}
                   maxLength={400}
                   rows={3}
+                  aria-describedby={sheetReady ? 'wish-visibility-note' : undefined}
                 />
+                {sheetReady && (
+                  <span id="wish-visibility-note" className="mt-2 block text-xs leading-relaxed text-forest/60">
+                    Tên và lời chúc của bạn sẽ xuất hiện trong sổ lưu bút để mọi người cùng đọc.
+                  </span>
+                )}
               </label>
 
               {/* Ô bẫy chống bot: người thật không thấy và không điền */}
@@ -285,7 +324,7 @@ export function RSVPForm({ maxGuests }: { maxGuests: number }) {
               {sendError && (
                 <p role="alert" className="rounded-xl bg-[#9b5b4b]/10 px-4 py-3 text-sm leading-relaxed text-forest/85">
                   {sendError === 'unconfirmed'
-                    ? 'Chưa nhận được phản hồi xác nhận đã lưu. Thông tin bạn điền vẫn được giữ lại; bấm “Gửi lại” để kiểm tra và tránh ghi trùng.'
+                    ? 'Chưa biết xác nhận đã gửi thành công hay chưa. Bạn bấm “Gửi lại” nhé, không cần điền lại thông tin.'
                     : 'Chưa lưu được xác nhận. Bạn vui lòng thử lại sau một chút.'}{' '}
                   Bạn cũng có thể{' '}
                   <button type="button" onClick={openFallback} className="underline underline-offset-4">
@@ -302,7 +341,7 @@ export function RSVPForm({ maxGuests }: { maxGuests: number }) {
                 disabled={sending}
                 icon={<Send className="h-4 w-4" strokeWidth={1.5} />}
               >
-                {sending ? 'Đang lưu xác nhận…' : sendError ? 'Gửi lại' : sheetReady ? 'Gửi xác nhận' : 'Soạn tin xác nhận'}
+                {sending ? 'Đang gửi…' : sendError ? 'Gửi lại' : sheetReady ? 'Gửi xác nhận' : 'Soạn tin xác nhận'}
               </Button>
             </fieldset>
           </motion.form>

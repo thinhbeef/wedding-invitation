@@ -1,5 +1,5 @@
 import { ChevronDown } from 'lucide-react';
-import { hero, weddingInfo } from '../data/weddingData';
+import { hero, displayCouple } from '../data/weddingData';
 import { formatDotDate } from '../utils/date';
 import { ArchBranch, FallingLeaves, Sprig } from '../components/common/Botanical';
 import { ImageWithFallback } from '../components/common/ImageWithFallback';
@@ -19,7 +19,7 @@ export function HeroSection({ onOpen, active = true }: Props) {
           <div className="hero-photo-crop">
             <ImageWithFallback
               src={hero.image}
-              alt={`${weddingInfo.groom.name} và ${weddingInfo.bride.name}`}
+              alt={`${displayCouple[0].name} và ${displayCouple[1].name}`}
               aspect="portrait"
               focus={hero.focus}
               priority
@@ -31,9 +31,9 @@ export function HeroSection({ onOpen, active = true }: Props) {
         <div className="hero-copy">
           <p className="hero-tagline">{hero.tagline}</p>
           <h1 className="hero-names">
-            <span>{weddingInfo.groom.name}</span>
+            <span>{displayCouple[0].name}</span>
             <span className="hero-ampersand">&amp;</span>
-            <span>{weddingInfo.bride.name}</span>
+            <span>{displayCouple[1].name}</span>
           </h1>
           <Sprig className="hero-sprig" />
           <p className="hero-date">{formatDotDate()}</p>

@@ -1,4 +1,5 @@
 node_modules
+.deploy-releases/
 dist
 .vercel
 wedding-repo/

@@ -1,0 +1,58 @@
+.guestbook-invitation {
+  margin-top: 28px;
+  padding-top: 26px;
+  border-top: 1px solid #78866c30;
+  text-align: center;
+}
+
+.guestbook-invitation-icon { width: 28px; height: 28px; margin: 0 auto 8px; color: var(--color-olive); }
+.guestbook-invitation h3 { font-family: var(--font-serif); font-size: 29px; line-height: 1.3; }
+.guestbook-invitation p { margin: 8px auto 0; max-width: 280px; font-size: 12px; color: #6b7164; }
+
+.guestbook-dialog {
+  width: min(600px, calc(100% - 28px));
+  max-width: none;
+  max-height: min(780px, calc(100dvh - 40px));
+  margin: auto;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid #b8c3aa80;
+  border-radius: 16px;
+  background: var(--color-ivory);
+  color: var(--color-forest);
+  box-shadow: 0 24px 100px #1f231c40;
+}
+
+.guestbook-dialog::backdrop { background: #1f231ca6; backdrop-filter: blur(5px); }
+.guestbook-content { display: flex; flex-direction: column; max-height: min(778px, calc(100dvh - 42px)); }
+.guestbook-header { position: relative; flex: none; padding: 28px 48px 22px; border-bottom: 1px solid #78866c25; text-align: center; }
+.guestbook-header h3 { margin-top: 10px; font-family: var(--font-script); font-size: 42px; line-height: 1.35; outline: none; }
+.guestbook-header p { margin-top: 8px; font-size: 12px; line-height: 1.8; color: #6b7164; }
+.guestbook-close { position: absolute; top: 10px; right: 10px; display: grid; width: 44px; height: 44px; place-items: center; border-radius: 50%; color: var(--color-olive-deep); cursor: pointer; }
+.guestbook-close:hover { background: #78866c15; }
+.guestbook-close:focus-visible { outline: 2px solid var(--color-olive-deep); outline-offset: -3px; }
+.guestbook-scroll { min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 22px; scrollbar-width: thin; scrollbar-color: var(--color-sage) transparent; }
+.guestbook-scroll:focus-visible { outline: 2px solid var(--color-olive); outline-offset: -4px; }
+.guestbook-list { display: grid; gap: 14px; padding: 0; margin: 0; list-style: none; }
+.guestbook-wish { position: relative; min-width: 0; padding: 20px 22px; border: 1px solid #78866c26; border-radius: 3px 14px 14px 14px; background: var(--color-warm); }
+.guestbook-wish-heart { position: absolute; top: 22px; right: 20px; width: 16px; height: 16px; color: #a18a55; }
+.guestbook-wish-name { padding-right: 28px; font-size: 13px; font-weight: 500; color: var(--color-olive-deep); overflow-wrap: anywhere; }
+.guestbook-wish-message { margin-top: 9px; font-size: 14px; line-height: 1.9; white-space: pre-wrap; overflow-wrap: anywhere; }
+.guestbook-state { padding: 25px 8px; text-align: center; font-size: 13px; line-height: 1.9; color: #6b7164; }
+.guestbook-empty-title { margin-bottom: 10px; font-family: var(--font-serif); font-size: 25px; color: var(--color-forest); }
+.guestbook-more { padding-top: 22px; text-align: center; }
+.guestbook-footer { flex: none; padding: 16px 24px max(16px, env(safe-area-inset-bottom)); border-top: 1px solid #78866c25; font-size: 11px; line-height: 1.8; text-align: center; color: #6b7164; }
+
+@media (max-width: 400px) {
+  .guestbook-header { padding: 24px 42px 18px; }
+  .guestbook-header h3 { font-size: 36px; }
+  .guestbook-scroll { padding: 16px; }
+  .guestbook-wish { padding: 18px 16px; }
+  .guestbook-wish-heart { right: 16px; }
+}
+
+@media (max-height: 500px) {
+  .guestbook-header { padding: 12px 48px; }
+  .guestbook-header > svg, .guestbook-header p, .guestbook-footer { display: none; }
+  .guestbook-header h3 { margin-top: 0; font-size: 32px; }
+}

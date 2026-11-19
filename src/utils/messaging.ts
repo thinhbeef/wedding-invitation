@@ -1,4 +1,5 @@
-import { weddingInfo } from '../data/weddingData';
+import { weddingInfo, displayCouple } from '../data/weddingData';
+import { brideSessions, invitationVariant, type SessionId } from '../data/invitationVariant';
 
 const isHttpUrl = (value: string) => /^https?:\/\//i.test(value.trim());
 const digitsOf = (value: string) => value.replace(/[^\d+]/g, '');
@@ -75,23 +76,42 @@ export interface RsvpPayload {
   attendance: Attendance;
   guests: number;
   message: string;
+  sessionId?: SessionId | null;
+}
+
+export function getRsvpSession(data: RsvpPayload) {
+  if (!invitationVariant.isBride) return undefined;
+  return brideSessions.find((session) => session.id === data.sessionId) ?? invitationVariant.session;
+}
+
+/** Giữ cách ghi cữ tiệc vào Sheet của hai link nhà gái đang dùng. */
+export function buildSheetMessage(data: RsvpPayload): string {
+  const session = getRsvpSession(data);
+  const label = data.attendance === 'yes' ? 'Cữ tiệc' : 'Thiệp mời';
+  const date = weddingInfo.date.split('-').reverse().join('/');
+  return [
+    session ? `[${label}: ${session.label} ${session.time} | ${date}]` : '',
+    data.message.trim(),
+  ].filter(Boolean).join('\n');
 }
 
 export function buildRsvpMessage(data: RsvpPayload): string {
-  const couple = `${weddingInfo.groom.name} & ${weddingInfo.bride.name}`;
+  const couple = `${displayCouple[0].name} & ${displayCouple[1].name}`;
+  const session = getRsvpSession(data);
   const lines = [
-    `XÁC NHẬN THAM DỰ – Đám cưới ${couple}`,
+    `XÁC NHẬN THAM DỰ – Tiệc mừng ${invitationVariant.ceremony.toLocaleLowerCase('vi-VN')} ${couple}`,
     '',
     `Họ tên: ${data.name.trim()}`,
     data.phone.trim() ? `Số điện thoại: ${data.phone.trim()}` : null,
     `Tham dự: ${data.attendance === 'yes' ? 'Có, mình sẽ đến' : 'Rất tiếc, mình không thể đến'}`,
     data.attendance === 'yes' ? `Số người: ${data.guests}` : null,
+    session ? `Cữ tiệc: ${session.label} · ${session.time} ngày ${weddingInfo.date.split('-').reverse().join('/')}` : null,
     data.message.trim() ? `\nLời chúc: ${data.message.trim()}` : null,
   ];
   return lines.filter((line) => line !== null).join('\n');
 }
 
 export function buildWishMessage(name: string, wish: string): string {
-  const couple = `${weddingInfo.groom.name} & ${weddingInfo.bride.name}`;
+  const couple = `${displayCouple[0].name} & ${displayCouple[1].name}`;
   return `Gửi ${couple} 💐\n\n${wish.trim()}\n\n— ${name.trim()}`;
 }

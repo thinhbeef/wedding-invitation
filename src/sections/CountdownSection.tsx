@@ -17,10 +17,10 @@ export function CountdownSection() {
 
   return (
     <section id="wedding" data-nav="wedding" className="section-space bg-mist">
-      <SectionTitle script="Save the date" title="Đếm ngược ngày chung đôi" />
+      <SectionTitle script="Save the date" title="Đếm ngược đến ngày vui" />
       <Reveal className="mx-auto mt-8 max-w-xl">
         {isPast ? (
-          <p className="text-center font-serif text-2xl text-forest/80 italic">Cảm ơn bạn đã cùng chúng mình đi qua ngày hạnh phúc nhất.</p>
+          <p className="text-center font-serif text-2xl text-forest/80 italic">Cảm ơn quý khách đã chung vui cùng gia đình.</p>
         ) : (
           <div className="grid grid-cols-4 divide-x divide-olive/25" role="timer">
             {units.map((unit, i) => (

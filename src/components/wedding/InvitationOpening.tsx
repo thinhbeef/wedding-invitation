@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { useReducedMotion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
-import { weddingInfo } from '../../data/weddingData';
+import { displayCouple } from '../../data/weddingData';
+import { invitationVariant } from '../../data/invitationVariant';
 import { formatDotDate } from '../../utils/date';
 import { BotanicalBranch } from '../common/Botanical';
 import { WeddingMonogram } from './WeddingMonogram';
@@ -17,13 +18,13 @@ function CoverPrint() {
   return (
     <span className="gatefold-print">
       <span className="gatefold-frame" />
-      <span className="gatefold-heading">Wedding invitation</span>
+      <span className="gatefold-heading">Thiệp mời {invitationVariant.ceremony.toLocaleLowerCase('vi-VN')}</span>
       <BotanicalBranch className="gatefold-botanical gatefold-botanical--left" outline leaves={7} />
       <BotanicalBranch className="gatefold-botanical gatefold-botanical--right" outline leaves={7} />
       <span className="gatefold-names">
-        <span>{weddingInfo.groom.name}</span>
+        <span>{displayCouple[0].name}</span>
         <i>&amp;</i>
-        <span>{weddingInfo.bride.name}</span>
+        <span>{displayCouple[1].name}</span>
       </span>
       <span className="gatefold-date">{formatDotDate()}</span>
     </span>
@@ -89,31 +90,31 @@ export function InvitationOpening({ onStart, onComplete }: Props) {
     <section
       ref={rootRef}
       className={`invitation-opening${opening ? ' is-opening' : ''}`}
-      aria-label="Thiệp mời lễ thành hôn"
+      aria-label={`Thiệp mời ${invitationVariant.ceremony.toLocaleLowerCase('vi-VN')}`}
       aria-busy={opening}
     >
       <div className="opening-content">
         <header className="opening-intro" data-opening-fade>
           <p className="opening-eyebrow">Trân trọng kính mời</p>
-          <h1 className="opening-dedication">Một ngày vui, một đời thương</h1>
+          <h1 className="opening-dedication">Mừng ngày hạnh phúc</h1>
         </header>
 
         <button
           type="button"
           className="opening-trigger"
           onClick={open}
-          aria-label={`Mở thiệp cưới ${weddingInfo.groom.name} và ${weddingInfo.bride.name}`}
+          aria-label={`Mở thiệp cưới ${displayCouple[0].name} và ${displayCouple[1].name}`}
           aria-describedby="opening-instruction"
           aria-disabled={opening}
         >
           <span className="gatefold-card" aria-hidden="true">
             <span className="gatefold-inside">
-              <span className="inside-eyebrow">Lễ thành hôn</span>
+              <span className="inside-eyebrow">{invitationVariant.ceremony}</span>
               <WeddingMonogram className="inside-monogram" />
-              <span className="inside-names">{weddingInfo.groom.name}<i>&amp;</i>{weddingInfo.bride.name}</span>
+              <span className="inside-names">{displayCouple[0].name}<i>&amp;</i>{displayCouple[1].name}</span>
               <span className="inside-divider" />
               <span className="inside-date">{formatDotDate()}</span>
-              <span className="inside-message">Hạnh phúc khi có bạn chung vui</span>
+              <span className="inside-message">Hân hạnh đón tiếp quý khách!</span>
             </span>
             <span className="gatefold-door gatefold-door--left" data-opening-door="left"><CoverPrint /></span>
             <span className="gatefold-door gatefold-door--right" data-opening-door="right"><CoverPrint /></span>
@@ -125,7 +126,7 @@ export function InvitationOpening({ onStart, onComplete }: Props) {
         </button>
 
         <p id="opening-instruction" className="opening-instruction" role="status" data-opening-fade>
-          {opening ? 'Mời bạn cùng chung vui…' : 'Chạm nhẹ để mở lời mời của chúng mình'}
+          {opening ? 'Đang mở thiệp…' : 'Bấm vào thiệp để mở'}
         </p>
       </div>
     </section>

@@ -46,7 +46,8 @@ Chép ảnh vào `public/images/` (JPG, JPEG, PNG, WEBP):
 cover.jpg            ảnh bìa gốc
 cover-web.jpg        bản nén của ảnh bìa (website đang dùng file này)
 couple-01..03.jpg    3 ảnh cưới gốc
-couple-01..03-opt.jpg bản tối ưu đang dùng ở Chuyện tình và album
+story-01..03-opt.jpg 3 ảnh riêng của phần Chuyện của chúng mình
+couple-01..03-opt.jpg 3 ảnh đầu album (độc lập với phần Chuyện)
 gallery-04..08-opt.jpg 5 ảnh tối ưu của album
 thankyou.jpg         ảnh lời cảm ơn
 ```
@@ -54,6 +55,12 @@ thankyou.jpg         ảnh lời cảm ơn
 Các bản gốc được giữ nguyên trên máy; website và bản deploy dùng hậu tố `-opt` để tải ảnh nhẹ hơn. Ảnh studio gốc bị ignore để không đưa file nặng vào Git/Vercel. File chưa có sẽ hiện khung “Ảnh sẽ được cập nhật” kèm tên file khi chạy dev.
 
 **Nên nén ảnh trước khi đưa lên** (cạnh dài ~2000px, < 500KB) – ảnh gốc từ máy ảnh thường 10–25MB, khách mở bằng 4G sẽ rất chậm. Có thể dùng <https://squoosh.app>.
+
+### Ảnh riêng cho phần Chuyện của chúng mình
+
+Thay ba file `public/images/story-01-opt.jpg`, `story-02-opt.jpg`, `story-03-opt.jpg` bằng ba ảnh riêng, theo thứ tự trái sang phải. Các file này chỉ dùng cho phần Chuyện; album vẫn dùng `couple-01-opt.jpg` đến `couple-03-opt.jpg` và các file `gallery-*`.
+
+Ba file `story-*` ban đầu là bản sao của ảnh hiện tại để thiệp không bị thiếu ảnh trong lúc chuẩn bị. Hãy thay bằng bộ ảnh mới trước khi phát hành; đổi tên file không làm nội dung ảnh khác đi. Khi cập nhật online, đồng bộ bộ ảnh này sang bản nhà gái và đổi phiên bản đường dẫn để tránh ảnh cũ trong bộ nhớ đệm.
 
 ### Thêm ảnh vào album
 
@@ -86,6 +93,31 @@ Khi `sheetUrl` còn để trống, hoặc khi gửi lỗi, khách có thể dùn
 - **Sao chép**: gửi qua kênh bất kỳ.
 
 ## 6. Build & deploy
+
+### Ba link Vercel đang sử dụng
+
+| Link | Nội dung |
+| --- | --- |
+| https://minh-chung-mot-nha.vercel.app/ | Nhà trai, 06/12/2026, đón khách 11:00 |
+| https://nhu-y-ngoc-thinh.vercel.app/10h30-trua | Nhà gái, 05/12/2026, cữ trưa 10:30 |
+| https://nhu-y-ngoc-thinh.vercel.app/16h | Nhà gái, 05/12/2026, cữ chiều 16:00 |
+
+Cả ba dùng cùng mã nguồn và cùng Google Sheet. `src/data/invitationVariant.ts` chọn bên nhà trai/nhà gái theo biến build `VITE_INVITATION_SIDE`; đường dẫn của thiệp nhà gái quyết định cữ tiệc. Thông tin cữ tiệc vẫn được lưu vào Sheet, nhưng không hiển thị trong sổ lưu bút.
+
+```bash
+npm run build:releases
+```
+
+Lệnh trên chỉ build, không tự deploy. Kết quả ở `.deploy-releases/groom` và `.deploy-releases/bride`, đã gắn đúng hai dự án Vercel và có HTML chia sẻ riêng cho từng link. Khi muốn phát hành:
+
+```bash
+vercel deploy --prebuilt --prod --cwd .deploy-releases/groom
+vercel deploy --prebuilt --prod --cwd .deploy-releases/bride
+```
+
+Hai dự án này không liên kết tự động với GitHub; push mã nguồn không thay thế bước deploy Vercel. Giữ nguyên URL Apps Script và cập nhật phiên bản script theo [hướng dẫn sổ lưu bút](HUONG-DAN-GOOGLE-SHEET.md#bật-sổ-lưu-bút-khi-đã-nối-google-sheet-trước-đó).
+
+Kiểm tra tự động (Node.js 22.13+): `node --test tests/*.test.mjs`.
 
 ```bash
 npm run build      # kết quả trong dist/

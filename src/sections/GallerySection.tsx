@@ -57,7 +57,7 @@ export function GallerySection() {
   return (
     <section id="gallery" data-nav="gallery" className="section-space bg-warm">
       <div>
-        <SectionTitle script="Our Moments" title="Khoảnh khắc của chúng mình" />
+        <SectionTitle script="Our Moments" title="Album ảnh cưới" />
       </div>
 
       <div className="gallery-layout">
