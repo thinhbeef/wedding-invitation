@@ -42,7 +42,7 @@ function validate(data: Omit<RsvpPayload, 'attendance'> & { attendance: Attendan
  * (qua Apps Script, không cần database). Nếu chưa cấu hình hoặc gửi lỗi, khách có thể dùng cách dự phòng:
  * soạn thành tin nhắn để tự gửi qua Zalo / SMS.
  */
-export function RSVPForm({ maxGuests }: { maxGuests: number }) {
+export function RSVPForm({ maxGuests, onWishSaved }: { maxGuests: number; onWishSaved?: () => void }) {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [attendance, setAttendance] = useState<Attendance | null>(null);
@@ -109,8 +109,10 @@ export function RSVPForm({ maxGuests }: { maxGuests: number }) {
     setSendError(null);
     try {
       const result = await submitRsvpToSheet(data, lastAttempt.current.id, honeypot);
-      if (result.status === 'saved') setSent({ name: data.name, attendance: data.attendance, hasWish: Boolean(data.message) });
-      else setSendError(result.status);
+      if (result.status === 'saved') {
+        setSent({ name: data.name, attendance: data.attendance, hasWish: Boolean(data.message) });
+        if (data.message) onWishSaved?.();
+      } else setSendError(result.status);
     } catch {
       setSendError('unconfirmed');
     } finally {
@@ -164,7 +166,7 @@ export function RSVPForm({ maxGuests }: { maxGuests: number }) {
             </p>
             {sent.hasWish && (
               <p className="mx-auto mt-3 max-w-sm text-xs leading-relaxed text-olive-deep">
-                Lời chúc của bạn đã được lưu. Bấm “Xem lời chúc” bên dưới để mở sổ lưu bút nhé.
+                Lời chúc của bạn đã được lưu. Danh sách lời chúc bên dưới sẽ tự cập nhật nhé.
               </p>
             )}
             <Button variant="ghost" className="mt-6" onClick={resetForm}>
@@ -304,7 +306,7 @@ export function RSVPForm({ maxGuests }: { maxGuests: number }) {
                 />
                 {sheetReady && (
                   <span id="wish-visibility-note" className="mt-2 block text-xs leading-relaxed text-forest/60">
-                    Tên và lời chúc của bạn sẽ xuất hiện trong sổ lưu bút để mọi người cùng đọc.
+                    Tên và lời chúc của bạn sẽ hiển thị bên dưới để mọi người cùng đọc.
                   </span>
                 )}
               </label>

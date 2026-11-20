@@ -71,7 +71,7 @@ Làm theo cách này thì link `/exec` **giữ nguyên**. Nếu bấm "Lượt t
 
 ## Bật sổ lưu bút khi đã nối Google Sheet trước đó
 
-Giao diện có nút **Xem lời chúc** ngay dưới biểu mẫu xác nhận. Khách bấm vào để mở sổ lưu bút, đọc tên và lời chúc mới nhất trước; bấm **Xem thêm lời chúc** để đọc tiếp. Các lời chúc cũ trong Sheet cũng được hiển thị, kể cả lời chúc của khách không tham dự. Dòng không có lời chúc được bỏ qua.
+Danh sách **Lời chúc yêu thương** tự hiển thị ngay dưới biểu mẫu xác nhận, với lời chúc mới nhất trước; bấm **Xem thêm lời chúc** để đọc tiếp khi có nhiều hơn 20 lời chúc. Các lời chúc cũ trong Sheet cũng được hiển thị, kể cả lời chúc của khách không tham dự. Dòng không có lời chúc được bỏ qua.
 
 **Cần cập nhật Apps Script một lần** vì bản trước chỉ nhận xác nhận, chưa có API đọc lời chúc:
 
@@ -79,13 +79,13 @@ Giao diện có nút **Xem lời chúc** ngay dưới biểu mẫu xác nhận. 
 2. Thay code bằng toàn bộ nội dung mới trong [`apps-script/rsvp.gs`](apps-script/rsvp.gs), rồi **Lưu**. Giữ nguyên trang tính **RSVP** và dữ liệu hiện có; không cần chạy lại `setup`.
 3. Chọn **Triển khai → Quản lý lượt triển khai → bút chì → Phiên bản mới → Triển khai**. Giữ quyền **Thực thi: Tôi**, **Truy cập: Bất kỳ ai**. Link `/exec` giữ nguyên nên không cần sửa `sheetUrl`.
 4. Mở link hiện tại và thêm `?action=wishes` ở cuối. Kết quả đúng có dạng `{"ok":true,"wishes":[{"id":"wish-2","name":"Tên khách","message":"Lời chúc"}],"nextCursor":null}`. Nếu Sheet chưa có lời chúc, `wishes` là `[]`.
-5. Khi bạn muốn đưa tính năng lên online, cập nhật bản website có phần sổ lưu bút. Mở **Xem lời chúc** trên điện thoại hoặc một trình duyệt khác để đối chiếu với Sheet.
+5. Khi bạn muốn đưa tính năng lên online, cập nhật bản website có phần sổ lưu bút. Cuộn đến **Lời chúc yêu thương** trên điện thoại hoặc một trình duyệt khác để đối chiếu với Sheet.
 
 Chỉ lưu code Apps Script mà chưa tạo **Phiên bản mới** thì Web app vẫn chạy bản cũ và sổ lưu bút sẽ báo chưa tải được lời chúc. Nếu kết quả ở bước 4 chỉ có `service: "wedding-rsvp"`, lượt triển khai vẫn dùng script cũ.
 
 Tham khảo [hướng dẫn cập nhật lượt triển khai của Google](https://developers.google.com/apps-script/concepts/deployments#edit_a_versioned_deployment) để đổi phiên bản mà giữ nguyên URL.
 
-Sổ lưu bút tải trực tiếp từ Sheet mỗi lần mở, không dùng bộ nhớ trình duyệt làm nguồn lưu lời chúc. Sau khi gửi thành công, khách bấm **Xem lời chúc** để xem lời vừa gửi. Nếu hai thiệp nhà trai và nhà gái dùng chung Sheet thì hai bên cùng xem chung sổ lưu bút.
+Danh sách tải trực tiếp từ Sheet khi mở trang, không dùng bộ nhớ trình duyệt làm nguồn lưu lời chúc. Sau khi gửi lời chúc thành công, danh sách tự tải lại để hiển thị lời vừa gửi. Nếu hai thiệp nhà trai và nhà gái dùng chung Sheet thì hai bên cùng xem chung sổ lưu bút.
 
 API công khai chỉ trả khóa dòng `id`, `name`, `message` và `nextCursor` để tải thêm từng 20 lời chúc. Số điện thoại, trạng thái tham dự, số người, bên nhà trai/nhà gái và mã gửi không được trả ra. Muốn gỡ một lời chúc, xoá nội dung ô **Lời chúc** của dòng đó trong Sheet; các thông tin xác nhận vẫn được giữ lại và lần mở sổ tiếp theo sẽ không thấy lời chúc ấy.
 
